@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Placements - Warden | Hostel MS{% endblock %}
+
+{% block content %}
+<div class="p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Placements</h1>
+    <form method="get" action="{{ url_for('warden_placements') }}" class="flex items-center space-x-2">
+      <input type="text" name="q" value="{{ q or '' }}" placeholder="Search by name, company, role, location, year" class="border rounded px-3 py-2 text-sm w-64" />
+      <button type="submit" class="px-3 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"><i class="fas fa-search mr-1"></i>Search</button>
+      {% if q %}
+      <a href="{{ url_for('warden_placements') }}" class="text-sm text-gray-500 hover:underline">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div class="bg-white p-6 rounded-lg shadow">
+    {% if placements %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for p in placements %}
+        <div class="border rounded-lg p-4 hover:shadow transition-shadow">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center">
+              <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-3">
+                <i class="fas fa-briefcase"></i>
+              </div>
+              <div>
+                <div class="text-sm text-gray-500">{{ p.company }}</div>
+                <div class="text-lg font-semibold">{{ p.role }}</div>
+              </div>
+            </div>
+            <span class="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{{ p.year }}</span>
+          </div>
+          <div class="mt-4 space-y-1 text-sm">
+            <div class="flex items-center text-gray-600">
+              <i class="fas fa-user mr-2 text-gray-400"></i>
+              <span class="font-medium">{{ p.student_name }}</span>
+            </div>
+            <div class="flex items-center text-gray-600">
+              <i class="fas fa-location-dot mr-2 text-gray-400"></i>
+              <span>{{ p.location }}</span>
+            </div>
+            <div class="flex items-center text-green-700">
+              <i class="fas fa-indian-rupee-sign mr-2 text-green-600"></i>
+              <span class="font-semibold">{{ p.package_lpa }} LPA</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <!-- Pagination -->
+      {% if total_pages and total_pages > 1 %}
+      <div class="mt-6 flex items-center justify-between">
+        <div class="text-sm text-gray-500">Showing page {{ page }} of {{ total_pages }} · {{ total_count }} results</div>
+        <div class="flex items-center space-x-2">
+          {% set prev_page = page - 1 %}
+          {% set next_page = page + 1 %}
+          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page <= 1 }}" href="{{ url_for('warden_placements', q=q, page=prev_page) }}">Prev</a>
+          {% for i in range(1, total_pages + 1) %}
+            <a href="{{ url_for('warden_placements', q=q, page=i) }}" class="px-3 py-2 border rounded text-sm {{ 'bg-gray-800 text-white border-gray-800' if i == page else 'bg-white' }}">{{ i }}</a>
+          {% endfor %}
+          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page >= total_pages }}" href="{{ url_for('warden_placements', q=q, page=next_page) }}">Next</a>
+        </div>
+      </div>
+      {% endif %}
+    {% else %}
+      <div class="text-center py-10">
+        <i class="fas fa-briefcase text-4xl text-gray-300 mb-2"></i>
+        <p class="text-gray-500">No placement records available.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

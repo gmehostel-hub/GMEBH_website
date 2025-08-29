@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Environment
+.env
+.env.*
+
+# OS/Editor
+.DS_Store
+*.log
+.idea/
+.vscode/
+
+# Flask/Build
+instance/
+*.sqlite3
+
+# Render/Deploy caches
+.render/

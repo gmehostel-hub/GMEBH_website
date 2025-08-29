@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Assign Students to Rooms - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Assign Students to Rooms</h1>
+        <a href="{{ url_for('admin_rooms') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Rooms
+        </a>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow">
+        <form method="POST" action="{{ url_for('admin_assign_students') }}">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-1">
+                    <h2 class="text-lg font-semibold mb-4">Select Room</h2>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Room</label>
+                    <select name="room_id" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" disabled selected>-- Choose a room --</option>
+                        {% for room in rooms %}
+                        {% set available = (room.capacity|int) - (room.current_occupancy|default(0)|int) %}
+                        <option value="{{ room._id }}" {% if available <= 0 %}disabled{% endif %}>
+                            {{ room.room_number }} ({{ room.room_type|title }}) - {{ room.current_occupancy|default(0) }}/{{ room.capacity }} occupied
+                            {% if available > 0 %} • {{ available }} bed(s) free{% else %} • Full{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <p class="text-xs text-gray-500 mt-2">Only rooms with free beds can accept new students.</p>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <h2 class="text-lg font-semibold mb-4">Choose Students</h2>
+                    {% if students %}
+                    <div class="border rounded-md divide-y max-h-96 overflow-y-auto">
+                        {% for s in students %}
+                        <label class="flex items-center p-3 hover:bg-gray-50">
+                            <input type="checkbox" name="student_ids" value="{{ s._id }}" class="mr-3">
+                            <div>
+                                <div class="text-sm font-medium">{{ s.name|default(s.email) }}</div>
+                                <div class="text-xs text-gray-500">{{ s.email }}</div>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-gray-500">All students are already assigned to rooms.</div>
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-2">Only unassigned students are listed here.</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <a href="{{ url_for('admin_rooms') }}" class="px-4 py-2 border border-gray-300 rounded-md text-sm bg-white hover:bg-gray-50">Cancel</a>
+                <button type="submit" class="px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">Assign Selected</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

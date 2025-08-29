@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Hostel Management System{% endblock %}
+
+{% block body_classes %}min-h-screen flex flex-col{% endblock %}
+{% block mobile_header_classes %}block{% endblock %}
+{% block sidebar_classes %}hidden bg-gray-800 text-white p-4 w-64 fixed inset-y-0 z-40{% endblock %}
+{% block backdrop_classes %}hidden{% endblock %}
+{% block sidebar_side %}right-0{% endblock %}
+
+
+{% block content %}
+<div class="bg-white">
+  <!-- Hero -->
+  <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight">
+      Govt. Medical<br class="sm:hidden"/>
+      And Engineering<br/>
+      Boys Hostel
+    </h1>
+    <br/>
+    <h3 class="md:text-4xl text-gray-600 text-sm">Bogadi, Mysuru - 570026</h3>
+    <p class="mt-6 text-gray-600 max-w-2xl mx-auto">
+      An integrated platform for students, wardens, and administrators. Manage rooms, library, placements, and more with unparalleled efficiency.
+    </p>
+
+    <div class="mt-8">
+      {% if current_user.is_authenticated %}
+        {% if current_user.role == 'admin' %}
+          <a href="{{ url_for('admin_dashboard') }}" class="inline-block px-6 py-3 rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow">
+            Access Your Dashboard
+          </a>
+        {% elif current_user.role == 'warden' %}
+          <a href="{{ url_for('warden_dashboard') }}" class="inline-block px-6 py-3 rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow">
+            Access Your Dashboard
+          </a>
+        {% else %}
+          <a href="{{ url_for('student_dashboard') }}" class="inline-block px-6 py-3 rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow">
+            Access Your Dashboard
+          </a>
+        {% endif %}
+      {% else %}
+        <a href="{{ url_for('login') }}" class="inline-block px-6 py-3 rounded-md text-white bg-blue-600 hover:bg-blue-700 shadow">
+          Access Your Dashboard
+        </a>
+      {% endif %}
+    </div>
+  </section>
+  <br/>
+  <br/>
+  <!-- Features -->
+  <section id="features" class="max-w-6xl mx-auto px-6 py-8">
+    <h2 class="text-3xl font-bold text-center text-gray-900">Everything You Need</h2>
+    <p class="text-center text-gray-600 mt-2">Our platform provides a comprehensive suite of tools to manage hostel life effectively.</p>
+
+    <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="p-6 rounded-lg border bg-white shadow-sm text-center">
+        <div class="text-blue-600 text-3xl mb-3"><i class="fas fa-users-cog"></i></div>
+        <h3 class="font-semibold text-gray-900">Room Management</h3>
+        <p class="text-gray-600 text-sm mt-2">Effortlessly assign rooms, manage student accommodations, and view occupancy details in real-time.</p>
+      </div>
+      <div class="p-6 rounded-lg border bg-white shadow-sm text-center">
+        <div class="text-blue-600 text-3xl mb-3"><i class="fas fa-book"></i></div>
+        <h3 class="font-semibold text-gray-900">Library System</h3>
+        <p class="text-gray-600 text-sm mt-2">A digital library for tracking books, managing fines, and promoting a reading culture.</p>
+      </div>
+      <div class="p-6 rounded-lg border bg-white shadow-sm text-center">
+        <div class="text-blue-600 text-3xl mb-3"><i class="fas fa-briefcase"></i></div>
+        <h3 class="font-semibold text-gray-900">Placement Cell</h3>
+        <p class="text-gray-600 text-sm mt-2">Monitor placement activities, track student progress, and celebrate their career achievements.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Developers -->
+  <section id="developers" class="max-w-6xl mx-auto px-6 py-12">
+    <h2 class="text-3xl font-bold text-center text-gray-900">Meet Our Developers</h2>
+    <p class="text-center text-gray-600 mt-2">The minds behind the platform, dedicated to creating a seamless experience for you.</p>
+
+    <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <div class="p-6 rounded-xl border bg-white shadow-sm">
+        <div class="flex items-center gap-4">
+          <img src="{{ url_for('static', filename='images/manoj.jpg') }}" alt="Manoj" class="h-16 w-16 rounded-full object-cover border" />
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Manoj</h3>
+            <p class="text-gray-500 text-sm">Python / MERN Developer</p>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm mt-4">
+            Blending logic with creativity to craft smart, scalable, and beautifully designed applications
+        </p>
+        <div class="flex gap-3 mt-4">
+          <a class="text-gray-500 hover:text-gray-700" href="https://www.linkedin.com/in/manoj-tb-34a001330/" aria-label="LinkedIn" target="_blank"><i class="fab fa-linkedin text-xl"></i></a>
+          <a class="text-gray-500 hover:text-gray-700" href="https://github.com/manojmanu03" aria-label="GitHub" target="_blank"><i class="fab fa-github text-xl"></i></a>
+        </div>
+      </div>
+
+      
+      <div class="p-6 rounded-xl border bg-white shadow-sm">
+        <div class="flex items-center gap-4">
+          <img src="{{ url_for('static', filename='images/raju.jpg') }}" alt="Raju Jadhav" class="h-16 w-16 rounded-full object-cover border" />
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Raju Jadhav</h3>
+            <p class="text-gray-500 text-sm">Full‑stack Developer</p>
+          </div>
+        </div>
+        <p class="text-gray-600 text-sm mt-4">
+          I'm a passionate and self‑driven Computer Science student with hands‑on experience in full‑stack web technologies. I enjoy solving real‑world problems and collaborating.
+        </p>
+        <div class="flex gap-3 mt-4">
+          <a class="text-gray-500 hover:text-gray-700" href="https://www.linkedin.com/in/raaj-jadhav/" aria-label="LinkedIn"  target="_blank"><i class="fab fa-linkedin text-xl"></i></a>
+          <a class="text-gray-500 hover:text-gray-700" href="https://github.com/raajjadhav92" aria-label="GitHub" target="_blank"><i class="fab fa-github text-xl"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Footer / Contact -->
+  <footer class="border-t" id="contact">
+    <div class="max-w-3xl mx-auto px-6 py-12 text-center">
+      <h3 class="text-2xl font-bold text-gray-900">Contact Us</h3>
+      <div class="mt-6 space-y-3 text-gray-700">
+        <div>
+          <span class="font-semibold">Phone:</span>
+          <a class="text-blue-600 hover:underline" href="tel:+919449433464">+91 9449433464</a>
+        </div>
+        <div>
+          <span class="font-semibold">Email:</span>
+          <a class="text-blue-600 hover:underline" href="mailto:maheshasbg@gmail.com">maheshasbg@gmail.com</a>
+        </div>
+      </div>
+      <div class="mt-8 text-gray-500">© 2025 gmebh. All Rights Reserved.</div>
+    </div>
+  </footer>
+</div>
+{% endblock %}

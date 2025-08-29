@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Hostel MS{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Statistics Cards -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">Total Students</h3>
+                    <p class="text-2xl font-bold">{{ stats.students_count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-door-open text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">Total Rooms</h3>
+                    <p class="text-2xl font-bold">{{ stats.rooms_count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                    <i class="fas fa-book text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">Total Books</h3>
+                    <p class="text-2xl font-bold">{{ stats.books_count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                    <i class="fas fa-comment-alt text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">Pending Feedback</h3>
+                    <p class="text-2xl font-bold">{{ stats.pending_feedback }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="{{ url_for('admin_students') }}" class="p-4 rounded-lg text-center text-white bg-blue-600 hover:bg-blue-700 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                <i class="fas fa-user-plus text-2xl mb-2"></i>
+                <p class="font-medium">Add Student</p>
+            </a>
+            <a href="{{ url_for('admin_rooms') }}" class="p-4 rounded-lg text-center text-white bg-green-600 hover:bg-green-700 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                <i class="fas fa-plus-circle text-2xl mb-2"></i>
+                <p class="font-medium">Add Room</p>
+            </a>
+            <a href="{{ url_for('admin_books') }}" class="p-4 rounded-lg text-center text-white bg-yellow-500 hover:bg-yellow-600 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                <i class="fas fa-book-medical text-2xl mb-2"></i>
+                <p class="font-medium">Add Book</p>
+            </a>
+            <a href="{{ url_for('admin_feedback') }}" class="p-4 rounded-lg text-center text-white bg-purple-600 hover:bg-purple-700 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                <i class="fas fa-comments text-2xl mb-2"></i>
+                <p class="font-medium">Feedback</p>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Recent Activities -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4">Recent Activities</h2>
+        <div class="space-y-4">
+            {% for activity in recent_activities %}
+            <div class="flex items-start pb-4 border-b border-gray-100">
+                <div class="p-2 rounded-full bg-gray-100 text-gray-600">
+                    <i class="fas {{ activity.icon }}"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm">{{ activity.message }}</p>
+                    <p class="text-xs text-gray-500">{{ activity.timestamp|datetimeformat }}</p>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">No recent activities</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto refresh the page every 5 minutes
+    setTimeout(function() {
+        window.location.reload();
+    }, 300000);
+</script>
+{% endblock %}

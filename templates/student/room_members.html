@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Room Members - Hostel MS{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold flex items-center">
+            <i class="fas fa-users text-blue-600 mr-2"></i>
+            Room Members
+        </h1>
+        <div class="text-sm text-gray-500">
+            <span class="font-medium">Room:</span>
+            {{ current_user.user_data.room_number }}
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-gray-700 font-medium">
+                Members ({{ (room_mates|length) + 1 }}/{{ room.capacity or 6 }})
+            </div>
+            <a href="{{ url_for('student_dashboard') }}" class="text-sm text-blue-600 hover:underline"><i class="fas fa-arrow-left mr-1"></i>Back to Dashboard</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="roomMembersGrid">
+            <!-- Current user card -->
+            <div class="border rounded-lg p-4 bg-blue-50 hover:shadow cursor-pointer member-card"
+                 data-name="{{ current_user.user_data.name }}"
+                 data-email="{{ current_user.user_data.email }}"
+                 data-phone="{{ current_user.user_data.phone or '' }}"
+                 data-stream="{{ current_user.user_data.stream or '' }}"
+                 data-branch="{{ current_user.user_data.branch or '' }}"
+                 data-year="{{ current_user.user_data.year or '' }}"
+                 data-college="{{ current_user.user_data.college or '' }}"
+                 data-role="You">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-lg">
+                        {{ current_user.user_data.name[0]|upper }}
+                    </div>
+                    <div class="ml-3">
+                        <div class="font-semibold">{{ current_user.user_data.name }}</div>
+                        <div class="text-xs text-gray-600">You</div>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-gray-600">
+                    <div>{{ current_user.user_data.email }}</div>
+                    {% if current_user.user_data.branch or current_user.user_data.year %}
+                    <div>{{ current_user.user_data.branch or '—' }}{% if current_user.user_data.year %} • Year {{ current_user.user_data.year }}{% endif %}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% for mate in room_mates %}
+            <div class="border rounded-lg p-4 hover:shadow cursor-pointer member-card"
+                 data-name="{{ mate.name }}"
+                 data-email="{{ mate.email or '' }}"
+                 data-phone="{{ mate.phone or '' }}"
+                 data-stream="{{ mate.stream or '' }}"
+                 data-branch="{{ mate.branch or '' }}"
+                 data-year="{{ mate.year or '' }}"
+                 data-college="{{ mate.college or '' }}"
+                 data-role="Student">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold text-lg">
+                        {{ mate.name[0]|upper }}
+                    </div>
+                    <div class="ml-3">
+                        <div class="font-semibold">{{ mate.name }}</div>
+                        <div class="text-xs text-gray-600">{{ mate.branch or '—' }}{% if mate.year %} • Year {{ mate.year }}{% endif %}</div>
+                    </div>
+                </div>
+                <div class="mt-3 text-xs text-gray-600">
+                    {% if mate.email %}<div>{{ mate.email }}</div>{% endif %}
+                    {% if mate.phone %}<div>{{ mate.phone }}</div>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if room_mates|length == 0 %}
+            <div class="text-center text-gray-500 text-sm mt-6">No other members in this room yet.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Member details modal
+    (function(){
+        const grid = document.getElementById('roomMembersGrid');
+        if(!grid) return;
+
+        function ensureModal(){
+            let modal = document.getElementById('memberDetailsModal');
+            if(modal) return modal;
+            modal = document.createElement('div');
+            modal.id = 'memberDetailsModal';
+            modal.className = 'hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full';
+            modal.innerHTML = `
+                <div class="relative top-16 mx-auto p-5 w-full max-w-md shadow-2xl rounded-lg bg-white">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-semibold">Member Details</h3>
+                        <button type="button" id="memberModalClose" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div id="memberDetailsBody" class="space-y-2 text-sm"></div>
+                </div>`;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e)=> { if(e.target === modal) hide(); });
+            document.getElementById('memberModalClose').addEventListener('click', hide);
+            function hide(){ modal.classList.add('hidden'); }
+            return modal;
+        }
+
+        function showDetails(data){
+            const modal = ensureModal();
+            const body = modal.querySelector('#memberDetailsBody');
+            const fields = [
+                ['Name', data.name],
+                ['Email', data.email || '—'],
+                ['Phone', data.phone || '—'],
+                ['Stream', data.stream || '—'],
+                ['Branch', data.branch || '—'],
+                ['Year', data.year || '—'],
+                ['College', data.college || '—']
+            ];
+            body.innerHTML = fields.map(([k,v]) => `
+                <div class="flex justify-between">
+                    <span class="text-gray-500">${k}</span>
+                    <span class="font-medium text-right">${v}</span>
+                </div>`).join('');
+            modal.classList.remove('hidden');
+        }
+
+        grid.addEventListener('click', function(e){
+            const card = e.target.closest('.member-card');
+            if(!card) return;
+            const data = {
+                name: card.dataset.name,
+                email: card.dataset.email,
+                phone: card.dataset.phone,
+                stream: card.dataset.stream,
+                branch: card.dataset.branch,
+                year: card.dataset.year,
+                college: card.dataset.college,
+                role: card.dataset.role
+            };
+            showDetails(data);
+        });
+    })();
+</script>
+{% endblock %}

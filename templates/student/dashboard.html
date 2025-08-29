@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - Hostel MS{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <div class="text-sm text-gray-500">
+            <span class="font-medium">Room:</span> 
+            {% if current_user.user_data.room_number %}
+                {{ current_user.user_data.room_number }}
+            {% else %}
+                Not Assigned
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Welcome Card -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <div class="flex items-center">
+            <div class="p-3 bg-blue-100 text-blue-600 rounded-full mr-4">
+                <i class="fas fa-user-graduate text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold">Welcome back, {{ current_user.user_data.name }}!</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hostel Rules (moved up) -->
+    <div class="bg-white p-6 rounded-lg shadow mb-8">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+            <i class="fas fa-scroll text-red-600 mr-2"></i>
+            Hostel Rules
+        </h2>
+        <ol class="list-decimal pl-6 space-y-2 text-gray-700">
+            <li>Maintain silence in the hostel premise.</li>
+            <li>Visitors are not allowed inside the hostel.</li>
+            <li>Keep your room and common areas clean.</li>
+            <li>Report any maintenance issues to the warden promptly.</li>
+            <li>Alcohol, drugs, and smoking are strictly prohibited.</li>
+            <li>Respect hostel staff and fellow residents.</li>
+            <li>Adhere to the hostel timings and curfew.</li>
+            <li>Vehicles should be parked inside the parking area.</li>
+            <li>Respect the privacy of your roommates.</li>
+        </ol>
+    </div>
+    
+    <!-- My Books (moved down) -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h2 class="text-xl font-semibold mb-4 flex items-center">
+            <i class="fas fa-book text-yellow-600 mr-2"></i>
+            My Books
+        </h2>
+        
+        {% if borrowed_books %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Book</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for book in borrowed_books %}
+                        <tr>
+                            <td class="px-4 py-2">
+                                <div class="text-sm font-medium">{{ book.book_title }}</div>
+                                <div class="text-xs text-gray-500">{{ book.book_id }}</div>
+                            </td>
+                            <td class="px-4 py-2 text-sm">{{ book.due_at|datetimeformat if book.due_at else '-' }}</td>
+                            <td class="px-4 py-2">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    {% if book.status == 'overdue' %}bg-red-100 text-red-800
+                                    {% else %}bg-green-100 text-green-800{% endif %}">
+                                    {{ book.status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-book-open text-4xl text-gray-300 mb-2"></i>
+                        <p class="text-gray-500">You haven't borrowed any books yet.</p>
+                        <a href="#" class="mt-2 inline-flex items-center text-gray-400">
+                            Visit Library (Coming Soon) <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto refresh the page every 5 minutes
+    setTimeout(function() {
+        window.location.reload();
+    }, 300000);
+</script>
+{% endblock %}

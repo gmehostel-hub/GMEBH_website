@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}Rooms - Warden{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Rooms</h1>
+        <!-- No actions in warden view -->
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="bg-white p-4 rounded-lg shadow mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 md:space-x-4">
+            <div class="relative flex-1">
+                <input id="roomSearch" type="text" placeholder="Search rooms..." 
+                       class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+            <div class="flex space-x-2">
+                <select id="floorFilter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Floors</option>
+                    <option value="ground">Ground Floor</option>
+                    <option value="1">1st Floor</option>
+                </select>
+                <select id="statusFilter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Status</option>
+                    <option value="available">Available</option>
+                    <option value="occupied">Occupied</option>
+                </select>
+                <button id="applyFilterBtn" class="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg flex items-center">
+                    <i class="fas fa-filter mr-2"></i> Filter
+                </button>
+            </div>
+        </div>
+        <div class="mt-3 text-sm text-gray-600"><span id="roomsCount"></span></div>
+    </div>
+
+    <!-- Rooms Grid -->
+    <div id="roomsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for room in rooms %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden border-l-4 
+                    {% if room.status == 'available' %}border-green-500
+                    {% elif room.status == 'occupied' %}border-blue-500
+                    {% else %}border-yellow-500{% endif %}"
+             data-room-number="{{ room.room_number }}"
+             data-room-type="{{ room.room_type }}"
+             data-floor="{{ room.floor }}"
+             data-status="{{ room.status }}"
+             data-capacity="{{ room.capacity }}"
+             data-occupancy="{{ room.current_occupancy }}">
+            <div class="p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-semibold">Room {{ room.room_number }}</h3>
+                        <p class="text-gray-600 text-sm">{{ room.room_type.replace('_',' ')|title }}</p>
+                    </div>
+                    <span class="px-2 py-1 text-xs rounded-full 
+                              {% if room.status == 'available' %}bg-green-100 text-green-800
+                              {% elif room.status == 'occupied' %}bg-blue-100 text-blue-800
+                              {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                        {{ room.status|title }}
+                    </span>
+                </div>
+                <div class="mt-4">
+                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                        <span>Floor:</span>
+                        <span class="font-medium">{{ room.floor }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600 mb-1">
+                        <span>Occupancy:</span>
+                        <span class="font-medium">{{ room.current_occupancy }}/{{ room.capacity }}</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t flex justify-between">
+                    <button onclick="viewRoomDetails('{{ room._id }}')" 
+                            class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                        <i class="fas fa-eye mr-1"></i> View
+                    </button>
+                    <!-- No edit/delete in warden view -->
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full text-center py-12">
+            <i class="fas fa-door-open text-4xl text-gray-300 mb-2"></i>
+            <p class="text-gray-500">No rooms found.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if rooms %}
+    <div class="mt-8 flex justify-center" id="roomsPagination"></div>
+    {% endif %}
+</div>
+
+<!-- View Room Modal (Dynamically populated) -->
+<div id="viewRoomModal" class="hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full" aria-modal="true" role="dialog">
+    <div class="modal-container relative top-16 mx-auto p-5 w-full max-w-2xl shadow-2xl rounded-lg bg-white">
+        <!-- Content will be loaded dynamically via JavaScript -->
+    </div>
+</div>
+
+<!-- View Student Modal -->
+<div id="viewStudentModal" class="hidden fixed inset-0 z-50 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full" aria-modal="true" role="dialog">
+    <div class="student-modal-container relative top-16 mx-auto p-5 w-full max-w-lg shadow-2xl rounded-lg bg-white">
+        <!-- Content injected dynamically -->
+    </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Client-side filtering + pagination (6 per page)
+    (function initRoomsFilteringAndPagination() {
+        const grid = document.getElementById('roomsGrid');
+        if (!grid) return;
+        const allCards = Array.from(grid.children);
+        function sortByRoomNumber(cards) {
+            const arr = [...cards];
+            arr.sort((a, b) => {
+                const an = Number(a.getAttribute('data-room-number'));
+                const bn = Number(b.getAttribute('data-room-number'));
+                if (isNaN(an) || isNaN(bn)) {
+                    return String(a.getAttribute('data-room-number')).localeCompare(String(b.getAttribute('data-room-number')));
+                }
+                return an - bn;
+            });
+            return arr;
+        }
+        const perPage = 6;
+        let current = 1;
+        let currentCards = [];
+        const pager = document.getElementById('roomsPagination');
+        function applyFilters() {
+            const q = (document.getElementById('roomSearch')?.value || '').trim().toLowerCase();
+            const f = (document.getElementById('floorFilter')?.value || '').toLowerCase();
+            const s = (document.getElementById('statusFilter')?.value || '').toLowerCase();
+            let filtered = allCards.filter(el => {
+                const rn = (el.getAttribute('data-room-number') || '').toLowerCase();
+                const rt = (el.getAttribute('data-room-type') || '').toLowerCase();
+                const fl = String(el.getAttribute('data-floor') || '').toLowerCase();
+                const st = (el.getAttribute('data-status') || '').toLowerCase();
+                const matchesSearch = !q || rn.includes(q) || rt.replace(/_/g, ' ').includes(q);
+                const matchesFloor = !f || fl === f;
+                const matchesStatus = !s || st === s;
+                return matchesSearch && matchesFloor && matchesStatus;
+            });
+            currentCards = sortByRoomNumber(filtered);
+            const countEl = document.getElementById('roomsCount');
+            if (countEl) {
+                countEl.textContent = `${currentCards.length} of ${allCards.length} rooms`;
+            }
+            renderPage(1);
+        }
+        function renderPage(n) {
+            allCards.forEach(el => { el.style.display = 'none'; });
+            const totalPages = Math.max(1, Math.ceil(currentCards.length / perPage));
+            current = Math.min(Math.max(1, n), totalPages);
+            const start = (current - 1) * perPage;
+            const end = start + perPage;
+            currentCards.slice(start, end).forEach(el => { el.style.display = ''; });
+            renderPager(totalPages);
+        }
+        function renderPager(totalPages) {
+            if (!pager) return;
+            pager.innerHTML = '';
+            if (currentCards.length === 0) return;
+            const nav = document.createElement('nav');
+            nav.className = 'inline-flex rounded-md shadow overflow-hidden';
+            const prev = document.createElement('button');
+            prev.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+            prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prev.disabled = current === 1;
+            prev.onclick = () => renderPage(current - 1);
+            nav.appendChild(prev);
+            for (let i = 1; i <= totalPages; i++) {
+                const b = document.createElement('button');
+                b.className = 'px-4 py-2 border-t border-b border-gray-300 ' + (i === current ? 'bg-blue-600 text-white font-medium' : 'bg-white text-gray-700 hover:bg-gray-50');
+                b.textContent = String(i);
+                b.onclick = () => renderPage(i);
+                nav.appendChild(b);
+            }
+            const next = document.createElement('button');
+            next.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+            next.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            next.disabled = current >= totalPages;
+            next.onclick = () => renderPage(current + 1);
+            nav.appendChild(next);
+            pager.appendChild(nav);
+        }
+        document.getElementById('applyFilterBtn')?.addEventListener('click', applyFilters);
+        document.getElementById('roomSearch')?.addEventListener('input', () => { applyFilters(); });
+        document.getElementById('floorFilter')?.addEventListener('change', applyFilters);
+        document.getElementById('statusFilter')?.addEventListener('change', applyFilters);
+        applyFilters();
+    })();
+
+    // View Room Details (no edit)
+    function viewRoomDetails(roomId) {
+        Promise.all([
+            fetch(`/api/rooms/${roomId}`).then(r => r.json()),
+            fetch(`/api/rooms/${roomId}/students`).then(r => r.json()).catch(() => ({ students: [] }))
+        ])
+        .then(([room, stuData]) => {
+            const students = (stuData && stuData.students) ? stuData.students : [];
+            const prettyType = room.room_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            const overlay = document.getElementById('viewRoomModal');
+            const container = overlay.querySelector('.modal-container');
+            container.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold">Room ${room.room_number} Details</h3>
+                    <button onclick="document.getElementById('viewRoomModal').classList.add('hidden')" 
+                            class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Status</p>
+                            <p class="font-medium">${room.status.charAt(0).toUpperCase() + room.status.slice(1)}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Type</p>
+                            <p class="font-medium">${prettyType}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Floor</p>
+                            <p class="font-medium">${room.floor === 'ground' ? 'Ground Floor' : room.floor + 'th Floor'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Capacity</p>
+                            <p class="font-medium">${room.capacity} Beds</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Occupancy</p>
+                            <p class="font-medium">${room.current_occupancy || 0} / ${room.capacity}</p>
+                        </div>
+                    </div>
+
+                    ${room.description ? `
+                    <div>
+                        <p class="text-sm text-gray-500 mb-1">Description</p>
+                        <p class="text-sm">${room.description}</p>
+                    </div>` : ''}
+
+                    <div class="pt-4 border-t">
+                        <h4 class="font-semibold mb-2">Students in this room</h4>
+                        ${students.length === 0 ? `
+                            <p class="text-sm text-gray-500">No students assigned.</p>
+                        ` : `
+                            <div class="divide-y border rounded">
+                                ${students.map(s => `
+                                    <div class="p-3 text-sm hover:bg-gray-50 cursor-pointer" onclick="viewStudentDetails('${s._id}')">
+                                        <div class="font-medium">${s.name}</div>
+                                        <div class="text-gray-600">${s.email}${s.phone ? ' • ' + s.phone : ''}</div>
+                                        <div class="text-gray-500">${s.stream ? s.stream : ''}${s.branch ? ' • ' + s.branch : ''}${s.year ? ' • Year ' + s.year : ''}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `}
+                    </div>
+
+                    <div class="pt-4 flex justify-end">
+                        <button onclick="document.getElementById('viewRoomModal').classList.add('hidden')" 
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">Close</button>
+                    </div>
+                </div>
+            `;
+            overlay.classList.remove('hidden');
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.classList.add('hidden'); };
+            document.addEventListener('keydown', function escHandler(ev) {
+                if (ev.key === 'Escape') {
+                    overlay.classList.add('hidden');
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching room details:', error);
+            alert('Failed to load room details. Please try again.');
+        });
+    }
+
+    // View Student Details (readonly for warden)
+    function viewStudentDetails(studentId) {
+        fetch(`/api/students/${studentId}`)
+            .then(r => {
+                if (!r.ok) throw new Error('Failed to fetch student');
+                return r.json();
+            })
+            .then(s => {
+                const overlay = document.getElementById('viewStudentModal');
+                const container = overlay.querySelector('.student-modal-container');
+                const safe = (v) => (v === null || v === undefined || v === '' ? '-' : v);
+                container.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold">${safe(s.name)}</h3>
+                        <button onclick="document.getElementById('viewStudentModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-500">Email</p>
+                                <p class="font-medium">${safe(s.email)}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Phone</p>
+                                <p class="font-medium">${safe(s.phone)}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">SWD ID</p>
+                                <p class="font-medium">${safe(s.swd_id)}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Year</p>
+                                <p class="font-medium">${safe(s.year)}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Stream</p>
+                                <p class="font-medium">${safe(s.stream)}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Branch</p>
+                                <p class="font-medium">${safe(s.branch)}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">College</p>
+                                <p class="font-medium">${safe(s.college)}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Room Number</p>
+                                <p class="font-medium">${safe(s.room_number)}</p>
+                            </div>
+                        </div>
+                        <div class="pt-4 flex justify-end">
+                            <button onclick="document.getElementById('viewStudentModal').classList.add('hidden')" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">Close</button>
+                        </div>
+                    </div>
+                `;
+                overlay.classList.remove('hidden');
+                overlay.onclick = (e) => { if (e.target === overlay) overlay.classList.add('hidden'); };
+                document.addEventListener('keydown', function escStudent(ev) {
+                    if (ev.key === 'Escape') {
+                        overlay.classList.add('hidden');
+                        document.removeEventListener('keydown', escStudent);
+                    }
+                });
+            })
+            .catch(err => {
+                console.error('Error fetching student details:', err);
+                alert('Failed to load student details.');
+            });
+    }
+</script>
+{% endblock %}

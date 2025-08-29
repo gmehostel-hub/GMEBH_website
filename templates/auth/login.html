@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Hostel Management System{% endblock %}
+
+{% block body_classes %}min-h-screen flex flex-col{% endblock %}
+{% block mobile_header_classes %}block{% endblock %}
+{% block sidebar_classes %}hidden bg-gray-800 text-white p-4 w-64 fixed inset-y-0 z-40{% endblock %}
+{% block backdrop_classes %}hidden{% endblock %}
+{% block sidebar_side %}right-0{% endblock %}
+
+{% block content %}
+<!-- Top Header/Nav -->
+<div class="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-md">
+    <!-- Brand/Header -->
+    <div class="text-center mb-2">
+        <div class="text-4xl font-extrabold text-blue-700 font-display">gmebh</div>
+    </div>
+
+    <!-- Welcome Title -->
+    <h1 class="text-3xl font-extrabold text-center text-gray-900">Welcome Back</h1>
+    <p class="text-center text-gray-500 mb-8">Sign in to access your dashboard</p>
+
+    <form method="POST" action="{{ url_for('login') }}" class="space-y-5">
+        <div>
+            <label for="email" class="block text-sm font-semibold text-gray-800 mb-1">Email Address</label>
+            <input type="email" id="email" name="email" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400">
+        </div>
+
+        <div>
+            <div class="flex items-center justify-between mb-1">
+                <label for="password" class="block text-sm font-semibold text-gray-800">Password</label>
+            </div>
+            <input type="password" id="password" name="password" required
+                   class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <!-- Forgot Password below password field -->
+            <div class="mt-2 text-right">
+                <a href="{{ url_for('forgot_password') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700">Forgot Password?</a>
+            </div>
+        </div>
+
+        <div class="flex items-center">
+            <input id="remember_me" name="remember" type="checkbox"
+                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <label for="remember_me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+        </div>
+
+        <div>
+            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Sign In
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

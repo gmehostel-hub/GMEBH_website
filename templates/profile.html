@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="p-4">
+  <h1 class="text-2xl font-bold mb-4">My Profile</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">User Details</h2>
+      <dl class="divide-y divide-gray-200">
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">Name</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.name or '—' }}</dd>
+        </div>
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">Email</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.email or '—' }}</dd>
+        </div>
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">Phone</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.phone or '—' }}</dd>
+        </div>
+        {% if details.role == 'student' %}
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">SWD ID</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.swd_id or '—' }}</dd>
+        </div>
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">Stream</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.stream or '—' }}</dd>
+        </div>
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">Branch</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.branch or '—' }}</dd>
+        </div>
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">Year</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.year or '—' }}</dd>
+        </div>
+        <div class="py-3 grid grid-cols-3 gap-4">
+          <dt class="text-sm font-medium text-gray-500">College</dt>
+          <dd class="mt-1 text-sm text-gray-900 col-span-2">{{ details.college or '—' }}</dd>
+        </div>
+        {% endif %}
+      </dl>
+    </div>
+
+    <div class="bg-white rounded shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Account</h2>
+      
+
+      <form action="{{ url_for('change_password') }}" method="POST" class="space-y-4 mb-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="current_password">Current Password</label>
+          <input type="password" id="current_password" name="current_password" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="new_password">New Password</label>
+            <input type="password" id="new_password" name="new_password" minlength="8" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="confirm_password">Confirm New Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" minlength="8" required class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Change Password</button>
+      </form>
+
+      <div class="space-x-2">
+        <a href="{{ url_for('logout') }}" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Query & Feedback - Warden{% endblock %}
+
+{% block content %}
+<div class="p-4">
+  <div class="flex items-center justify-between mb-4 gap-3 flex-col md:flex-row">
+    <h1 class="text-2xl font-bold">Query & Feedback</h1>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6">
+    <!-- Open -->
+    <div>
+      <h2 class="text-xl font-semibold mb-2">Open</h2>
+      <div class="bg-white rounded shadow overflow-hidden">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100 text-left">
+              <th class="px-4 py-2">Title</th>
+              <th class="px-4 py-2">Reporter</th>
+              <th class="px-4 py-2">Created</th>
+              <th class="px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in open_items %}
+            <tr class="border-t align-top">
+              <td class="px-4 py-2">
+                <div class="font-medium">{{ item.title }}</div>
+                <div class="text-sm text-gray-600 whitespace-pre-line">{{ item.description }}</div>
+              </td>
+              <td class="px-4 py-2">{{ item.reporter_name or '—' }}</td>
+              <td class="px-4 py-2 text-sm text-gray-600">{{ item.created_at|datetimeformat }}</td>
+              <td class="px-4 py-2 w-64">
+                <form method="POST" action="/warden/feedback/{{ item._id }}/resolve" class="space-y-2">
+                  <textarea name="resolution_notes" class="w-full p-2 border rounded" rows="3" placeholder="How it was resolved / details"></textarea>
+                  <button class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700" type="submit">Mark Resolved</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">No open queries/feedback</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Resolved -->
+    <div>
+      <h2 class="text-xl font-semibold mb-2">Resolved</h2>
+      <div class="bg-white rounded shadow overflow-hidden">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-gray-100 text-left">
+              <th class="px-4 py-2">Title</th>
+              <th class="px-4 py-2">Resolved</th>
+              <th class="px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in resolved_items %}
+            <tr class="border-t align-top">
+              <td class="px-4 py-2">
+                <div class="font-medium">{{ item.title }}</div>
+                <div class="text-sm text-gray-600 whitespace-pre-line">{{ item.description }}</div>
+                {% if item.resolution_notes %}
+                <div class="mt-2 text-sm">
+                  <span class="font-medium">Resolution Notes:</span>
+                  <div class="whitespace-pre-line">{{ item.resolution_notes }}</div>
+                </div>
+                {% endif %}
+              </td>
+              <td class="px-4 py-2 text-sm text-gray-600">{{ item.resolved_at|datetimeformat }}</td>
+              <td class="px-4 py-2 w-48">
+                <form method="POST" action="/warden/feedback/{{ item._id }}/unresolve">
+                  <button class="px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700" type="submit">Move to Open</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="px-4 py-6 text-center text-gray-500">No resolved items</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Feedback Modal -->
+<div id="addFeedbackModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg p-6 w-full max-w-xl">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">Add Query / Feedback</h2>
+      <button onclick="toggleModal('addFeedbackModal', true)"><i class="fas fa-times text-gray-500"></i></button>
+    </div>
+    <form method="POST" action="{{ url_for('warden_add_feedback') }}" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Title</label>
+        <input name="title" required class="w-full p-2 border rounded" placeholder="Short summary">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Description</label>
+        <textarea name="description" required class="w-full p-2 border rounded" rows="5" placeholder="Describe the problem or query in detail"></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Reporter (optional)</label>
+        <input name="reporter_name" class="w-full p-2 border rounded" placeholder="Your name">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" class="px-4 py-2 border rounded" onclick="toggleModal('addFeedbackModal', true)">Cancel</button>
+        <button class="px-4 py-2 bg-blue-600 text-white rounded" type="submit">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function toggleModal(id, hide){
+  const el = document.getElementById(id);
+  if(!el) return;
+  hide ? el.classList.add('hidden') : el.classList.remove('hidden');
+}
+</script>
+{% endblock %}

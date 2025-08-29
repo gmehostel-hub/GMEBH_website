@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Warden Dashboard - Hostel MS{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Warden Dashboard</h1>
+        <div class="text-sm text-gray-500">
+            <span class="font-medium">Hostel:</span> {{ current_user.user_data.assigned_hostel|default('Main Hostel') }}
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">Total Students</h3>
+                    <p class="text-2xl font-bold">{{ stats.students_count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600">
+                    <i class="fas fa-door-open text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">Occupied Rooms</h3>
+                    <p class="text-2xl font-bold">{{ stats.occupied_rooms }}/{{ stats.total_rooms }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                    <i class="fas fa-book text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">Total Books</h3>
+                    <p class="text-2xl font-bold">{{ stats.books_count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                    <i class="fas fa-comment-alt text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-gray-500 text-sm font-medium">New Feedback</h3>
+                    <p class="text-2xl font-bold">{{ stats.new_feedback }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mb-8">        
+        <!-- Quick Actions -->
+        <div class="space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+                <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-5">
+                    <a href="{{ url_for('warden_students') }}" class="p-4 rounded-lg text-center text-white bg-blue-600 hover:bg-blue-700 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                        <i class="fas fa-users text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">View Students</span>
+                    </a>
+                    <a href="{{ url_for('warden_rooms') }}" class="p-4 rounded-lg text-center text-white bg-green-600 hover:bg-green-700 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                        <i class="fas fa-door-open text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">View Rooms</span>
+                    </a>
+                    <a href="{{ url_for('warden_books') }}" class="p-4 rounded-lg text-center text-white bg-yellow-500 hover:bg-yellow-600 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                        <i class="fas fa-book text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">View Books</span>
+                    </a>
+                    <a href="{{ url_for('warden_placements') }}" class="p-4 rounded-lg text-center text-white bg-indigo-600 hover:bg-indigo-700 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                        <i class="fas fa-briefcase text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">Placements</span>
+                    </a>
+                    <a href="{{ url_for('warden_feedback') }}" class="p-4 rounded-lg text-center text-white bg-purple-600 hover:bg-purple-700 shadow hover:shadow-lg transform hover:-translate-y-0.5 transition">
+                        <i class="fas fa-comments text-2xl mb-2"></i>
+                        <span class="text-sm font-medium">Query &amp; Feedback</span>
+                    </a>
+                </div>
+            </div>
+         </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Make table rows clickable
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('tr[onclick]');
+        rows.forEach(row => {
+            row.style.cursor = 'pointer';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

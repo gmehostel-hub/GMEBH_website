@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hostel Management System{% endblock %}</title>
+    <!-- Modern web fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            /* Global body font */
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            background-image: linear-gradient(#f5f5f5 1px, transparent 1px), 
+                            linear-gradient(90deg, #f5f5f5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* Headings use a display font */
+        h1, h2, h3, .font-display {
+            font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+        .notebook-paper {
+            background: white;
+            border-left: 1px solid #d1d5db;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+        }
+        .btn {
+            @apply px-4 py-2 rounded font-medium transition-colors duration-200;
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white hover:bg-blue-700;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_classes %}min-h-screen flex flex-col md:flex-row{% endblock %}">
+    {% block sidebar %}
+    <!-- Sidebar (collapsible on mobile) -->
+    <div id="sidebar" class="{% block sidebar_classes %}hidden md:block bg-gray-800 text-white p-4 md:min-h-screen w-64 fixed md:static inset-y-0 {% block sidebar_side %}left-0{% endblock %} z-40{% endblock %}">
+        <div class="text-2xl font-bold mb-8 text-center py-4 border-b border-gray-700">
+            <i class="fas fa-home mr-2"></i>
+            Hostel MS
+        </div>
+        
+        <nav>
+            {% if current_user.is_authenticated %}
+                <ul class="space-y-2">
+                    <!-- Top Profile and Dashboard links for all roles -->
+                    <li>
+                        <a href="{{ url_for('profile') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-user mr-2"></i>Profile</a>
+                    </li>
+                    <!-- Dashboard (role-aware) -->
+                    <li>
+                        {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('admin_dashboard') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                        {% elif current_user.role == 'warden' %}
+                            <a href="{{ url_for('warden_dashboard') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                        {% else %}
+                            <a href="{{ url_for('student_dashboard') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a>
+                        {% endif %}
+                    </li>
+                    {% if current_user.role == 'admin' or current_user.role == 'warden' %}
+                        <li>
+                            {% if current_user.role == 'admin' %}
+                                <a href="{{ url_for('admin_rooms') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-door-open mr-2"></i>Rooms</a>
+                            {% else %}
+                                <a href="{{ url_for('warden_rooms') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-door-open mr-2"></i>Rooms</a>
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if current_user.role == 'admin' %}
+                                <a href="{{ url_for('admin_students') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-users mr-2"></i>Students</a>
+                            {% else %}
+                                <a href="{{ url_for('warden_students') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-users mr-2"></i>Students</a>
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if current_user.role == 'admin' %}
+                                <a href="{{ url_for('admin_books') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-book mr-2"></i>Library</a>
+                            {% else %}
+                                <a href="{{ url_for('warden_books') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-book mr-2"></i>Library</a>
+                            {% endif %}
+                        </li>
+                        {% if current_user.role == 'admin' %}
+                            <li><a href="{{ url_for('admin_transactions') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-exchange-alt mr-2"></i>Transactions</a></li>
+                            <li><a href="{{ url_for('admin_placements') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-briefcase mr-2"></i>Placements</a></li>
+                            <li><a href="{{ url_for('admin_feedback') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-comment-alt mr-2"></i>Query &amp; Feedback</a></li>
+                        {% elif current_user.role == 'warden' %}
+                            <li><a href="{{ url_for('warden_placements') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-briefcase mr-2"></i>Placements</a></li>
+                            <li><a href="{{ url_for('warden_feedback') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-comment-alt mr-2"></i>Query &amp; Feedback</a></li>
+                        {% endif %}
+                    {% else %}
+                        {% if current_user.role == 'student' %}
+                            <li><a href="{{ url_for('student_room_members') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-users mr-2"></i>Room Members</a></li>
+                            <li><a href="{{ url_for('student_books') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-book mr-2"></i>Library</a></li>
+                            <li><a href="{{ url_for('student_placements') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-briefcase mr-2"></i>Placements</a></li>
+                            <li><a href="{{ url_for('student_feedback') }}" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-comment-dots mr-2"></i>Query or Feedback</a></li>
+                        {% else %}
+                            <li><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-users mr-2"></i>Room Members (Coming Soon)</a></li>
+                            <li><a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-book mr-2"></i>Library (Coming Soon)</a></li>
+                        {% endif %}
+                    {% endif %}
+                    <li><a href="{{ url_for('logout') }}" class="block py-2 px-4 hover:bg-gray-700 rounded text-red-400"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a></li>
+                </ul>
+            {% else %}
+                <ul class="space-y-2">
+                    <li><a href="{{ url_for('index') }}#features" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-layer-group mr-2"></i>Features</a></li>
+                    <li><a href="{{ url_for('index') }}#developers" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-users mr-2"></i>Developers</a></li>
+                    <li><a href="{{ url_for('index') }}#contact" class="block py-2 px-4 hover:bg-gray-700 rounded"><i class="fas fa-envelope mr-2"></i>Contact</a></li>
+                    <li><a href="{{ url_for('login') }}" class="block py-2 px-4 hover:bg-gray-700 rounded text-blue-300"><i class="fas fa-sign-in-alt mr-2"></i>Login</a></li>
+                </ul>
+            {% endif %}
+        </nav>
+    </div>
+    {% endblock %}
+
+    <!-- Backdrop for mobile sidebar -->
+    <div id="backdrop" class="fixed inset-0 bg-black bg-opacity-40 z-30 {% block backdrop_classes %}hidden md:hidden{% endblock %}"></div>
+
+    {% block mobile_header %}
+    <!-- Mobile top bar -->
+    <header class="{% block mobile_header_classes %}md:hidden{% endblock %} sticky top-0 z-30 bg-white border-b">
+        <div class="px-4 py-3 flex items-center justify-between">
+            <div class="font-semibold text-gray-900">GMEBH</div>
+            <div class="w-10"></div>
+            <button id="menuBtn" class="inline-flex items-center justify-center h-10 w-10 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+    {% endblock %}
+
+    <!-- Main content -->
+    <div class="flex-1 md:ml-0">
+        <div class="notebook-paper">
+            <div class="p-6">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="mb-4 p-4 rounded {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+      (function() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+        const menuBtn = document.getElementById('menuBtn');
+
+        if (!sidebar || !menuBtn || !backdrop) return;
+
+        function openSidebar() {
+          sidebar.classList.remove('hidden');
+          backdrop.classList.remove('hidden');
+          menuBtn.setAttribute('aria-expanded', 'true');
+        }
+        function closeSidebar() {
+          sidebar.classList.add('hidden');
+          backdrop.classList.add('hidden');
+          menuBtn.setAttribute('aria-expanded', 'false');
+        }
+        menuBtn.addEventListener('click', function() {
+          const isHidden = sidebar.classList.contains('hidden');
+          isHidden ? openSidebar() : closeSidebar();
+        });
+        backdrop.addEventListener('click', closeSidebar);
+      })();
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

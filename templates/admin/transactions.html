@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions - Admin{% endblock %}
+
+{% block content %}
+<div class="p-4">
+  <div class="flex items-center justify-between mb-4 gap-3 flex-col md:flex-row">
+    <h1 class="text-2xl font-bold">Library - Transactions</h1>
+    <div class="relative w-full md:w-96">
+      <input id="txSearch" type="text" placeholder="Search by book id/title or student name/SWD ID..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+    </div>
+  </div>
+
+  <!-- Current History -->
+  <h2 class="text-lg font-semibold mt-2 mb-2">Current History</h2>
+  <div class="bg-white rounded shadow overflow-x-auto">
+    <table class="min-w-full">
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="px-4 py-2">Book</th>
+          <th class="px-4 py-2">Student</th>
+          <th class="px-4 py-2">Issued At</th>
+          <th class="px-4 py-2">Due Date</th>
+          <th class="px-4 py-2">Status</th>
+          <th class="px-4 py-2 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="txCurrentTbody">
+        {% for t in current_transactions %}
+        <tr class="border-t tx-row tx-current" data-book-id="{{ t.book_id }}" data-book-title="{{ t.book_title }}" data-student-name="{{ t.student_name }}" data-student-swd-id="{{ t.student_swd_id }}" data-status="{{ t.status }}">
+          <td class="px-4 py-2"><div class="font-medium">{{ t.book_title }}</div><div class="text-xs text-gray-500">{{ t.book_id }}</div></td>
+          <td class="px-4 py-2"><div class="font-medium">{{ t.student_name }}</div><div class="text-xs text-gray-500">{{ t.student_swd_id }}</div></td>
+          <td class="px-4 py-2">{{ t.issued_at|datetimeformat }}</td>
+          <td class="px-4 py-2">{{ t.due_at|datetimeformat if t.due_at else '-' }}</td>
+          <td class="px-4 py-2">
+            {% if t.status == 'overdue' %}
+              <span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700">Overdue</span>
+            {% else %}
+              <span class="px-2 py-1 rounded text-xs bg-blue-100 text-blue-700">Issued</span>
+            {% endif %}
+          </td>
+          <td class="px-4 py-2 text-center">
+            {% if t.book_oid %}
+            <form method="POST" action="{{ url_for('return_book', book_oid=t.book_oid) }}" class="inline">
+              <button class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700" type="submit">Return</button>
+            </form>
+            {% else %}
+            <span class="text-xs text-gray-400">N/A</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No current issues</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div id="txCurrentPagination" class="mt-4 flex justify-center"></div>
+
+  <!-- Past History -->
+  <h2 class="text-lg font-semibold mt-8 mb-2">Past History</h2>
+  <div class="bg-white rounded shadow overflow-x-auto">
+    <table class="min-w-full">
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="px-4 py-2">Book</th>
+          <th class="px-4 py-2">Student</th>
+          <th class="px-4 py-2">Issued At</th>
+          <th class="px-4 py-2">Returned At</th>
+          <th class="px-4 py-2 text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody id="txPastTbody">
+        {% for t in past_transactions %}
+        <tr class="border-t tx-row tx-past" data-book-id="{{ t.book_id }}" data-book-title="{{ t.book_title }}" data-student-name="{{ t.student_name }}" data-student-swd-id="{{ t.student_swd_id }}" data-status="{{ t.status }}">
+          <td class="px-4 py-2"><div class="font-medium">{{ t.book_title }}</div><div class="text-xs text-gray-500">{{ t.book_id }}</div></td>
+          <td class="px-4 py-2"><div class="font-medium">{{ t.student_name }}</div><div class="text-xs text-gray-500">{{ t.student_swd_id }}</div></td>
+          <td class="px-4 py-2">{{ t.issued_at|datetimeformat }}</td>
+          <td class="px-4 py-2">{{ t.returned_at|datetimeformat if t.returned_at else '-' }}</td>
+          <td class="px-4 py-2 text-center"><span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700">Returned</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">No past history</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div id="txPastPagination" class="mt-4 flex justify-center"></div>
+</div>
+
+<script>
+(function(){
+  const search = document.getElementById('txSearch');
+  const perPage = 10;
+
+  function setupSection(rowSelector, pagerId){
+    const allRows = Array.from(document.querySelectorAll(rowSelector));
+    const pager = document.getElementById(pagerId);
+    let viewRows = [];
+    let page = 1;
+
+    function apply(){
+      const q = (search?.value || '').trim().toLowerCase();
+      viewRows = allRows.filter(tr => {
+        const bid = (tr.dataset.bookId||'').toLowerCase();
+        const bt = (tr.dataset.bookTitle||'').toLowerCase();
+        const sn = (tr.dataset.studentName||'').toLowerCase();
+        const swd = (tr.dataset.studentSwdId||'').toLowerCase();
+        return !q || bid.includes(q) || bt.includes(q) || sn.includes(q) || swd.includes(q);
+      });
+      render(1);
+    }
+
+    function render(n){
+      allRows.forEach(tr=> tr.style.display='none');
+      const totalPages = Math.max(1, Math.ceil(viewRows.length / perPage));
+      page = Math.min(Math.max(1,n), totalPages);
+      const start = (page-1)*perPage;
+      const end = start + perPage;
+      viewRows.slice(start,end).forEach(tr=> tr.style.display='');
+      renderPager(totalPages);
+    }
+
+    function renderPager(totalPages){
+      if(!pager) return;
+      pager.innerHTML = '';
+      if(viewRows.length === 0) return;
+      const nav = document.createElement('nav');
+      nav.className = 'inline-flex rounded-md shadow overflow-hidden';
+      const prev = document.createElement('button');
+      prev.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+      prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+      prev.disabled = page === 1;
+      prev.onclick = ()=> render(page-1);
+      nav.appendChild(prev);
+      for(let i=1;i<=totalPages;i++){
+        const b = document.createElement('button');
+        b.className = 'px-4 py-2 border-t border-b border-gray-300 ' + (i===page ? 'bg-blue-600 text-white font-medium' : 'bg-white text-gray-700 hover:bg-gray-50');
+        b.textContent = String(i);
+        b.onclick = ()=> render(i);
+        nav.appendChild(b);
+      }
+      const next = document.createElement('button');
+      next.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+      next.innerHTML = '<i class="fas fa-chevron-right"></i>';
+      next.disabled = page >= totalPages;
+      next.onclick = ()=> render(page+1);
+      nav.appendChild(next);
+      pager.appendChild(nav);
+    }
+
+    return { apply };
+  }
+
+  const currentSec = setupSection('.tx-current', 'txCurrentPagination');
+  const pastSec = setupSection('.tx-past', 'txPastPagination');
+
+  function applyAll(){
+    currentSec.apply();
+    pastSec.apply();
+  }
+
+  if(search) search.addEventListener('input', applyAll);
+  applyAll();
+})();
+</script>
+{% endblock %}

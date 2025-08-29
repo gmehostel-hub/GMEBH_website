@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Books - Warden{% endblock %}
+
+{% block content %}
+<div class="p-4">
+  <div class="flex items-center justify-between mb-4 gap-3 flex-col md:flex-row">
+    <h1 class="text-2xl font-bold">Library - Books</h1>
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <div class="relative w-full md:w-80">
+        <input id="bookSearch" type="text" placeholder="Search by ID, title, or author..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+      </div>
+      <!-- View-only: no Add or Transactions buttons -->
+    </div>
+  </div>
+
+  <div class="bg-white rounded shadow overflow-x-auto">
+    <table class="min-w-full">
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="px-4 py-2">Book ID</th>
+          <th class="px-4 py-2">Title</th>
+          <th class="px-4 py-2">Author</th>
+          <th class="px-4 py-2 text-right">Price</th>
+          <th class="px-4 py-2 text-center">Status</th>
+        </tr>
+      </thead>
+      <tbody id="booksTbody">
+        {% for b in books %}
+        <tr class="border-t book-row" data-book-id="{{ b.book_id }}" data-title="{{ b.title }}" data-author="{{ b.author }}" data-status="{{ b.status }}">
+          <td class="px-4 py-2 font-mono">{{ b.book_id }}</td>
+          <td class="px-4 py-2">{{ b.title }}</td>
+          <td class="px-4 py-2">{{ b.author }}</td>
+          <td class="px-4 py-2 text-right">{{ '%.2f' % b.price if b.price is not none }}</td>
+          <td class="px-4 py-2 text-center">
+            <span class="px-2 py-1 rounded text-xs {{ 'bg-green-100 text-green-700' if b.status=='available' else 'bg-yellow-100 text-yellow-700' }}">{{ b.status|capitalize }}</span>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">No books found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div id="booksPagination" class="mt-4 flex justify-center"></div>
+</div>
+
+<script>
+(function(){
+  const rows = Array.from(document.querySelectorAll('.book-row'));
+  const search = document.getElementById('bookSearch');
+  const pager = document.getElementById('booksPagination');
+  const perPage = 10;
+  let currentRows = [];
+  let current = 1;
+
+  function applyFilter(){
+    const q = (search?.value || '').trim().toLowerCase();
+    currentRows = rows.filter(tr => {
+      const id = (tr.dataset.bookId||'').toLowerCase();
+      const title = (tr.dataset.title||'').toLowerCase();
+      const author = (tr.dataset.author||'').toLowerCase();
+      return !q || id.includes(q) || title.includes(q) || author.includes(q);
+    }).sort((a,b)=> (a.dataset.title||'').localeCompare(b.dataset.title||'', undefined, {sensitivity:'base'}));
+    renderPage(1);
+  }
+
+  function renderPage(n){
+    rows.forEach(tr=> tr.style.display='none');
+    const totalPages = Math.max(1, Math.ceil(currentRows.length / perPage));
+    current = Math.min(Math.max(1,n), totalPages);
+    const start = (current-1)*perPage;
+    const end = start + perPage;
+    currentRows.slice(start,end).forEach(tr=> tr.style.display='');
+    renderPager(totalPages);
+  }
+
+  function renderPager(totalPages){
+    if(!pager) return;
+    pager.innerHTML = '';
+    if(currentRows.length === 0) return;
+    const nav = document.createElement('nav');
+    nav.className = 'inline-flex rounded-md shadow overflow-hidden';
+    const prev = document.createElement('button');
+    prev.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+    prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prev.disabled = current === 1;
+    prev.onclick = ()=> renderPage(current-1);
+    nav.appendChild(prev);
+    for(let i=1;i<=totalPages;i++){
+      const b = document.createElement('button');
+      b.className = 'px-4 py-2 border-t border-b border-gray-300 ' + (i===current ? 'bg-blue-600 text-white font-medium' : 'bg-white text-gray-700 hover:bg-gray-50');
+      b.textContent = String(i);
+      b.onclick = ()=> renderPage(i);
+      nav.appendChild(b);
+    }
+    const next = document.createElement('button');
+    next.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+    next.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    next.disabled = current >= totalPages;
+    next.onclick = ()=> renderPage(current+1);
+    nav.appendChild(next);
+    pager.appendChild(nav);
+  }
+
+  if(search) search.addEventListener('input', applyFilter);
+  applyFilter();
+})();
+</script>
+{% endblock %}

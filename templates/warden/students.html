@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Students - Warden{% endblock %}
+
+{% block content %}
+<div class="p-4">
+    <h1 class="text-2xl font-bold mb-4">Students</h1>
+
+    <!-- Toolbar (no add in warden view) -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
+        <div class="relative w-full md:max-w-md">
+            <input id="studentSearch" type="text" placeholder="Search by name, email, or room..." 
+                   class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+        <div class="flex items-center gap-3">
+            <span id="studentsCount" class="text-sm text-gray-600"></span>
+            <!-- No Add button in warden view -->
+        </div>
+    </div>
+    
+    <!-- Students List -->
+    <div class="bg-white rounded shadow overflow-x-auto">
+        <table class="min-w-full">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="px-4 py-2 text-left">Name</th>
+                    <th class="px-4 py-2 text-left">Email</th>
+                    <th class="px-4 py-2">Room</th>
+                    <th class="px-4 py-2 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr class="border-t student-row cursor-pointer hover:bg-gray-50"
+                    data-student-id="{{ student._id }}"
+                    data-name="{{ student.name }}"
+                    data-email="{{ student.email }}"
+                    data-room="{{ student.room_number or '' }}">
+                    <td class="px-4 py-2">{{ student.name }}</td>
+                    <td class="px-4 py-2">{{ student.email }}</td>
+                    <td class="px-4 py-2 text-center">{{ student.room_number or '-' }}</td>
+                    <td class="px-4 py-2 text-center">
+                        <button type="button" class="text-blue-600 hover:text-blue-800 mr-1 view-btn" title="View"
+                                data-student-id="{{ student._id }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <!-- No edit/delete in warden view -->
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="px-4 py-2 text-center text-gray-500">No students found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="studentsPagination" class="mt-4 flex justify-center"></div>
+</div>
+
+<!-- View Student Modal -->
+<div id="viewStudentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg w-full max-w-lg shadow-lg z-10">
+        <div class="flex justify-between items-center p-4 border-b">
+            <h3 class="text-lg font-semibold">Student Details</h3>
+            <button class="p-1" onclick="toggleModal('viewStudentModal', true)"><i class="fas fa-times text-gray-500"></i></button>
+        </div>
+        <div id="viewStudentBody" class="p-4 text-sm"></div>
+        <div class="flex justify-end gap-2 p-4 border-t">
+            <button class="px-4 py-2 border rounded" onclick="toggleModal('viewStudentModal', true)">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Utility to open/close modal
+    function toggleModal(id, hide) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (hide) el.classList.add('hidden'); else el.classList.remove('hidden');
+    }
+
+    // Setup filtering and pagination (10/page). View-only.
+    (function() {
+        const allRows = Array.from(document.querySelectorAll('.student-row'));
+        const search = document.getElementById('studentSearch');
+        const countEl = document.getElementById('studentsCount');
+        const pager = document.getElementById('studentsPagination');
+        const perPage = 10;
+        let current = 1;
+        let currentRows = [];
+
+        function sortByName(rows) {
+            const arr = [...rows];
+            arr.sort((a,b) => (a.getAttribute('data-name')||'').localeCompare(b.getAttribute('data-name')||'', undefined, {sensitivity:'base'}));
+            return arr;
+        }
+
+        function updateCount(visible) {
+            if (countEl) countEl.textContent = `${visible} of ${allRows.length} students`;
+        }
+
+        function applyFilter() {
+            const q = (search?.value || '').trim().toLowerCase();
+            const filtered = allRows.filter(tr => {
+                const name = (tr.getAttribute('data-name') || '').toLowerCase();
+                const email = (tr.getAttribute('data-email') || '').toLowerCase();
+                const room = String(tr.getAttribute('data-room') || '').toLowerCase();
+                return !q || name.includes(q) || email.includes(q) || room.includes(q);
+            });
+            currentRows = sortByName(filtered);
+            updateCount(currentRows.length);
+            renderPage(1);
+        }
+
+        function renderPage(n) {
+            allRows.forEach(tr => { tr.style.display = 'none'; });
+            const totalPages = Math.max(1, Math.ceil(currentRows.length / perPage));
+            current = Math.min(Math.max(1, n), totalPages);
+            const start = (current - 1) * perPage;
+            const end = start + perPage;
+            currentRows.slice(start, end).forEach(tr => { tr.style.display = ''; });
+            renderPager(totalPages);
+        }
+
+        function renderPager(totalPages) {
+            if (!pager) return;
+            pager.innerHTML = '';
+            if (currentRows.length === 0) return;
+            const nav = document.createElement('nav');
+            nav.className = 'inline-flex rounded-md shadow overflow-hidden';
+            const prev = document.createElement('button');
+            prev.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+            prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prev.disabled = current === 1;
+            prev.onclick = () => renderPage(current - 1);
+            nav.appendChild(prev);
+            for (let i = 1; i <= totalPages; i++) {
+                const b = document.createElement('button');
+                b.className = 'px-4 py-2 border-t border-b border-gray-300 ' + (i === current ? 'bg-blue-600 text-white font-medium' : 'bg-white text-gray-700 hover:bg-gray-50');
+                b.textContent = String(i);
+                b.onclick = () => renderPage(i);
+                nav.appendChild(b);
+            }
+            const next = document.createElement('button');
+            next.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+            next.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            next.disabled = current >= totalPages;
+            next.onclick = () => renderPage(current + 1);
+            nav.appendChild(next);
+            pager.appendChild(nav);
+        }
+
+        async function openDetails(id) {
+            try {
+                const res = await fetch(`/api/students/${id}`);
+                const s = await res.json();
+                const body = document.getElementById('viewStudentBody');
+                if (res.ok && body) {
+                    body.innerHTML = `
+                        <div class='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                            <div><span class='text-gray-500'>Name</span><div class='font-medium'>${s.name || ''}</div></div>
+                            <div><span class='text-gray-500'>Email</span><div class='font-medium break-all'>${s.email || ''}</div></div>
+                            <div><span class='text-gray-500'>Phone</span><div class='font-medium'>${s.phone || '-'}</div></div>
+                            <div><span class='text-gray-500'>SWD ID</span><div class='font-medium'>${s.swd_id || '-'}</div></div>
+                            <div><span class='text-gray-500'>Room</span><div class='font-medium'>${s.room_number ?? '-'}</div></div>
+                            <div><span class='text-gray-500'>Year</span><div class='font-medium'>${s.year ?? '-'}</div></div>
+                            <div><span class='text-gray-500'>Stream</span><div class='font-medium capitalize'>${(s.stream || '-') }</div></div>
+                            <div><span class='text-gray-500'>Branch</span><div class='font-medium'>${s.branch || '-'}</div></div>
+                            <div><span class='text-gray-500'>College</span><div class='font-medium'>${s.college || '-'}</div></div>
+                        </div>`;
+                    toggleModal('viewStudentModal');
+                } else {
+                    alert(s?.error || 'Failed to load student');
+                }
+            } catch (e) {
+                alert('Failed to load student');
+            }
+        }
+
+        function attachRowHandlers() {
+            allRows.forEach(tr => {
+                const id = tr.getAttribute('data-student-id');
+                tr.addEventListener('click', () => openDetails(id));
+            });
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-student-id');
+                    openDetails(id);
+                });
+            });
+        }
+
+        if (search) search.addEventListener('input', applyFilter);
+        attachRowHandlers();
+        applyFilter();
+    })();
+</script>
+{% endblock %}

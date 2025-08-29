@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Placements - Admin{% endblock %}
+
+{% block content %}
+<div class="p-4">
+  <div class="flex items-center justify-between mb-4 gap-3 flex-col md:flex-row">
+    <h1 class="text-2xl font-bold">Placements</h1>
+    <div class="flex items-center gap-3 w-full md:w-auto">
+      <div class="relative w-full md:w-80">
+        <input id="placementSearch" type="text" placeholder="Search by student, company, role, location, year..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+      </div>
+      <button class="bg-blue-600 text-white px-4 py-2 rounded" onclick="toggleModal('addPlacementModal')">Add Placement</button>
+    </div>
+  </div>
+
+  <div class="bg-white rounded shadow overflow-x-auto">
+    <table class="min-w-full">
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="px-4 py-2">Student</th>
+          <th class="px-4 py-2 text-right">Package (LPA)</th>
+          <th class="px-4 py-2">Company</th>
+          <th class="px-4 py-2">Role</th>
+          <th class="px-4 py-2">Location</th>
+          <th class="px-4 py-2 text-center">Year</th>
+        </tr>
+      </thead>
+      <tbody id="placementsTbody">
+        {% for p in placements %}
+        <tr class="border-t placement-row" data-student="{{ p.student_name }}" data-company="{{ p.company }}" data-role="{{ p.role }}" data-location="{{ p.location }}" data-year="{{ p.year }}">
+          <td class="px-4 py-2">{{ p.student_name }}</td>
+          <td class="px-4 py-2 text-right">{{ '%.2f' % p.package_lpa if p.package_lpa is not none }}</td>
+          <td class="px-4 py-2">{{ p.company }}</td>
+          <td class="px-4 py-2">{{ p.role }}</td>
+          <td class="px-4 py-2">{{ p.location }}</td>
+          <td class="px-4 py-2 text-center">{{ p.year }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No placements added yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div id="placementsPagination" class="mt-4 flex justify-center"></div>
+</div>
+
+<!-- Add Placement Modal -->
+<div id="addPlacementModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-lg p-6 w-full max-w-xl">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">Add Placement</h2>
+      <button onclick="toggleModal('addPlacementModal', true)"><i class="fas fa-times text-gray-500"></i></button>
+    </div>
+    <form method="POST" action="{{ url_for('add_placement') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Student Name</label>
+        <input name="student_name" required class="w-full p-2 border rounded" placeholder="Full name">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Package (LPA)</label>
+        <input name="package_lpa" type="number" min="0" step="0.01" required class="w-full p-2 border rounded" placeholder="e.g., 12.5">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Company</label>
+        <input name="company" required class="w-full p-2 border rounded" placeholder="Company name">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Role</label>
+        <input name="role" required class="w-full p-2 border rounded" placeholder="Job role">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Location</label>
+        <input name="location" required class="w-full p-2 border rounded" placeholder="City, Country">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Year of Placement</label>
+        <input name="year" type="number" min="2000" max="2100" required class="w-full p-2 border rounded" placeholder="e.g., 2025">
+      </div>
+      <div class="md:col-span-2 flex justify-end gap-2 pt-2">
+        <button type="button" class="px-4 py-2 border rounded" onclick="toggleModal('addPlacementModal', true)">Cancel</button>
+        <button class="px-4 py-2 bg-blue-600 text-white rounded" type="submit">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function toggleModal(id, hide){
+  const el = document.getElementById(id);
+  if(!el) return;
+  hide ? el.classList.add('hidden') : el.classList.remove('hidden');
+}
+
+(function(){
+  const rows = Array.from(document.querySelectorAll('.placement-row'));
+  const search = document.getElementById('placementSearch');
+  const pager = document.getElementById('placementsPagination');
+  const perPage = 10;
+  let currentRows = [];
+  let current = 1;
+
+  function applyFilter(){
+    const q = (search?.value || '').trim().toLowerCase();
+    currentRows = rows.filter(tr => {
+      const student = (tr.dataset.student||'').toLowerCase();
+      const company = (tr.dataset.company||'').toLowerCase();
+      const role = (tr.dataset.role||'').toLowerCase();
+      const location = (tr.dataset.location||'').toLowerCase();
+      const year = String(tr.dataset.year||'').toLowerCase();
+      return !q || student.includes(q) || company.includes(q) || role.includes(q) || location.includes(q) || year.includes(q);
+    }).sort((a,b)=> (Number(b.dataset.year)||0) - (Number(a.dataset.year)||0) || (a.dataset.student||'').localeCompare(b.dataset.student||'', undefined, {sensitivity:'base'}));
+    renderPage(1);
+  }
+
+  function renderPage(n){
+    rows.forEach(tr=> tr.style.display='none');
+    const totalPages = Math.max(1, Math.ceil(currentRows.length / perPage));
+    current = Math.min(Math.max(1,n), totalPages);
+    const start = (current-1)*perPage;
+    const end = start + perPage;
+    currentRows.slice(start,end).forEach(tr=> tr.style.display='');
+    renderPager(totalPages);
+  }
+
+  function renderPager(totalPages){
+    if(!pager) return;
+    pager.innerHTML = '';
+    if(currentRows.length === 0) return;
+    const nav = document.createElement('nav');
+    nav.className = 'inline-flex rounded-md shadow overflow-hidden';
+    const prev = document.createElement('button');
+    prev.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+    prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prev.disabled = current === 1;
+    prev.onclick = ()=> renderPage(current-1);
+    nav.appendChild(prev);
+    for(let i=1;i<=totalPages;i++){
+      const b = document.createElement('button');
+      b.className = 'px-4 py-2 border-t border-b border-gray-300 ' + (i===current ? 'bg-blue-600 text-white font-medium' : 'bg-white text-gray-700 hover:bg-gray-50');
+      b.textContent = String(i);
+      b.onclick = ()=> renderPage(i);
+      nav.appendChild(b);
+    }
+    const next = document.createElement('button');
+    next.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
+    next.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    next.disabled = current >= totalPages;
+    next.onclick = ()=> renderPage(current+1);
+    nav.appendChild(next);
+    pager.appendChild(nav);
+  }
+
+  if(search) search.addEventListener('input', applyFilter);
+  applyFilter();
+})();
+</script>
+{% endblock %}
