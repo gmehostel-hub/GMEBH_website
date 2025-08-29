@@ -13,8 +13,9 @@ import certifi
 from threading import Lock
 from email_client import EmailClient
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from this file's directory to ensure nested .env is found
+_dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(_dotenv_path)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY') or 'dev-key-for-testing'
@@ -100,6 +101,7 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
 email_client = EmailClient(app, mail)
+print(f"Email provider: {email_client.provider}")
 
 # Login Manager
 login_manager = LoginManager()
