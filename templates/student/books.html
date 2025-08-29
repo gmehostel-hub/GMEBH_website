@@ -171,28 +171,65 @@
     if(!pager) return;
     pager.innerHTML = '';
     if(currentRows.length === 0) return;
+
+    // Container with horizontal scroll on small screens
+    const wrap = document.createElement('div');
+    wrap.className = 'max-w-full overflow-x-auto';
+
     const nav = document.createElement('nav');
-    nav.className = 'inline-flex rounded-md shadow overflow-hidden';
-    const prev = document.createElement('button');
-    prev.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
-    prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
-    prev.disabled = current === 1;
-    prev.onclick = ()=> renderPage(current-1);
-    nav.appendChild(prev);
-    for(let i=1;i<=totalPages;i++){
+    nav.className = 'inline-flex rounded-md shadow bg-white';
+
+    const mkBtn = (label, onClick, disabled=false, active=false, extraClass='') => {
       const b = document.createElement('button');
-      b.className = 'px-4 py-2 border-t border-b border-gray-300 ' + (i===current ? 'bg-blue-600 text-white font-medium' : 'bg-white text-gray-700 hover:bg-gray-50');
-      b.textContent = String(i);
-      b.onclick = ()=> renderPage(i);
-      nav.appendChild(b);
+      b.type = 'button'
+      b.className = (active
+        ? 'px-3 py-2 border border-gray-300 bg-blue-600 text-white font-medium '
+        : 'px-3 py-2 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 ') + extraClass;
+      b.innerHTML = label;
+      b.disabled = !!disabled;
+      if(onClick) b.onclick = onClick;
+      return b;
+    };
+
+    // Prev
+    nav.appendChild(mkBtn('<i class="fas fa-chevron-left"></i>', ()=> renderPage(current-1), current===1));
+
+    // Compute windowed pages: first, last, current±2 with ellipses
+    const pages = new Set([1, totalPages]);
+    for(let i=Math.max(1, current-2); i<=Math.min(totalPages, current+2); i++) pages.add(i);
+    const sorted = Array.from(pages).sort((a,b)=>a-b);
+
+    let prevPage = null;
+    sorted.forEach(p => {
+      if(prevPage && p !== prevPage + 1){
+        // Ellipsis that jumps by -5/+5 around current
+        nav.appendChild(mkBtn('…', ()=> renderPage(p>current ? Math.min(totalPages, current+5) : Math.max(1, current-5)), false, false, 'min-w-[2.5rem]'));
+      }
+      nav.appendChild(mkBtn(String(p), ()=> renderPage(p), false, p===current));
+      prevPage = p;
+    });
+
+    // Next
+    nav.appendChild(mkBtn('<i class="fas fa-chevron-right"></i>', ()=> renderPage(current+1), current>=totalPages));
+
+    wrap.appendChild(nav);
+
+    // Quick jump select for very large page counts (shown on mobile only)
+    if(totalPages > 20){
+      const jumpWrap = document.createElement('div');
+      jumpWrap.className = 'mt-2 md:mt-0 md:ml-3 flex justify-center md:inline-flex';
+      const sel = document.createElement('select');
+      sel.className = 'block md:hidden border rounded px-2 py-2';
+      for(let i=1;i<=totalPages;i++){
+        const opt = document.createElement('option');
+        opt.value = i; opt.text = 'Page ' + i; if(i===current) opt.selected = true; sel.appendChild(opt);
+      }
+      sel.onchange = () => renderPage(parseInt(sel.value));
+      jumpWrap.appendChild(sel);
+      wrap.appendChild(jumpWrap);
     }
-    const next = document.createElement('button');
-    next.className = 'px-3 py-2 border border-gray-300 bg-white text-gray-600 hover:bg-gray-50';
-    next.innerHTML = '<i class="fas fa-chevron-right"></i>';
-    next.disabled = current >= totalPages;
-    next.onclick = ()=> renderPage(current+1);
-    nav.appendChild(next);
-    pager.appendChild(nav);
+
+    pager.appendChild(wrap);
   }
 
   if(search) search.addEventListener('input', applyFilter);
