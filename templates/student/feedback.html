@@ -3,7 +3,7 @@
 {% block title %}Query & Feedback - Student{% endblock %}
 
 {% block content %}
-<div class="p-6">
+<div class="p-3 sm:p-4 md:p-6">
   <h1 class="text-2xl font-bold mb-6">Submit Query or Feedback</h1>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -60,21 +60,61 @@
       </div>
 
       <!-- Pagination Controls -->
-      <div class="flex items-center justify-between mt-4">
+      {% if total_pages and total_pages > 1 %}
+      <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div class="text-sm text-gray-600">Page {{ page }} of {{ total_pages }}</div>
-        <div class="space-x-2">
-          {% if page > 1 %}
-            <a href="{{ url_for('student_feedback', page=page-1) }}" class="px-3 py-1 border rounded hover:bg-gray-50">Prev</a>
-          {% else %}
-            <span class="px-3 py-1 border rounded text-gray-400 cursor-not-allowed">Prev</span>
-          {% endif %}
-          {% if page < total_pages %}
-            <a href="{{ url_for('student_feedback', page=page+1) }}" class="px-3 py-1 border rounded hover:bg-gray-50">Next</a>
-          {% else %}
-            <span class="px-3 py-1 border rounded text-gray-400 cursor-not-allowed">Next</span>
-          {% endif %}
+
+        <div class="max-w-full overflow-x-auto">
+          <nav class="inline-flex rounded-md shadow bg-white">
+            {% set prev_page = page - 1 %}
+            {% set next_page = page + 1 %}
+
+            <a class="px-3 py-2 border border-gray-300 {{ 'text-gray-400 cursor-not-allowed pointer-events-none bg-gray-50' if page <= 1 else 'text-gray-700 hover:bg-gray-50' }}" href="{{ url_for('student_feedback', page=prev_page) }}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+
+            {# windowed pages with ellipses: first, last, and page±2 #}
+            {% set window_start = 1 if page - 2 < 1 else page - 2 %}
+            {% set window_end = total_pages if page + 2 > total_pages else page + 2 %}
+
+            <a href="{{ url_for('student_feedback', page=1) }}" class="px-3 py-2 border border-gray-300 {{ 'bg-blue-600 text-white font-medium' if page == 1 else 'bg-white text-gray-700 hover:bg-gray-50' }}">1</a>
+
+            {% if window_start > 2 %}
+              <span class="px-3 py-2 border border-gray-300 bg-white text-gray-700">…</span>
+            {% endif %}
+
+            {% for i in range(window_start, window_end + 1) %}
+              {% if i != 1 and i != total_pages %}
+                <a href="{{ url_for('student_feedback', page=i) }}" class="px-3 py-2 border border-gray-300 {{ 'bg-blue-600 text-white font-medium' if i == page else 'bg-white text-gray-700 hover:bg-gray-50' }}">{{ i }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {% if window_end < total_pages - 1 %}
+              <span class="px-3 py-2 border border-gray-300 bg-white text-gray-700">…</span>
+            {% endif %}
+
+            {% if total_pages > 1 %}
+              <a href="{{ url_for('student_feedback', page=total_pages) }}" class="px-3 py-2 border border-gray-300 {{ 'bg-blue-600 text-white font-medium' if page == total_pages else 'bg-white text-gray-700 hover:bg-gray-50' }}">{{ total_pages }}</a>
+            {% endif %}
+
+            <a class="px-3 py-2 border border-gray-300 {{ 'text-gray-400 cursor-not-allowed pointer-events-none bg-gray-50' if page >= total_pages else 'text-gray-700 hover:bg-gray-50' }}" href="{{ url_for('student_feedback', page=next_page) }}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </nav>
         </div>
+
+        {% if total_pages > 20 %}
+        <form method="get" action="{{ url_for('student_feedback') }}" class="md:hidden">
+          <label class="sr-only" for="fbPageJump">Jump to page</label>
+          <select id="fbPageJump" name="page" class="border rounded px-2 py-2" onchange="this.form.submit()">
+            {% for i in range(1, total_pages + 1) %}
+              <option value="{{ i }}" {% if i == page %}selected{% endif %}>Page {{ i }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        {% endif %}
       </div>
+      {% endif %}
     </div>
   </div>
 </div>

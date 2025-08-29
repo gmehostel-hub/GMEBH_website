@@ -3,7 +3,7 @@
 {% block title %}Library - Student{% endblock %}
 
 {% block content %}
-<div class="p-4">
+<div class="p-2 sm:p-3 md:p-4">
   <div class="flex items-center justify-between mb-4 gap-3 flex-col md:flex-row">
     <h1 class="text-2xl font-bold">Library</h1>
   </div>
@@ -11,9 +11,9 @@
   <!-- Tabs -->
   <div class="mb-4 border-b border-gray-200">
     <nav class="flex gap-2" role="tablist">
-      <button class="px-4 py-2 rounded-t bg-white border border-b-0 tab-btn font-medium" data-tab="tab-all" aria-selected="true"><i class="fas fa-book mr-2"></i>All Books</button>
-      <button class="px-4 py-2 rounded-t bg-gray-100 border tab-btn" data-tab="tab-current"><i class="fas fa-book-reader mr-2"></i>My Borrowed</button>
-      <button class="px-4 py-2 rounded-t bg-gray-100 border tab-btn" data-tab="tab-history"><i class="fas fa-history mr-2"></i>History</button>
+      <button class="px-3 py-2 sm:px-4 rounded-t bg-white border border-b-0 tab-btn font-medium" data-tab="tab-all" aria-selected="true"><i class="fas fa-book mr-2"></i>All Books</button>
+      <button class="px-3 py-2 sm:px-4 rounded-t bg-gray-100 border tab-btn" data-tab="tab-current"><i class="fas fa-book-reader mr-2"></i>My Borrowed</button>
+      <button class="px-3 py-2 sm:px-4 rounded-t bg-gray-100 border tab-btn" data-tab="tab-history"><i class="fas fa-history mr-2"></i>History</button>
     </nav>
   </div>
 
@@ -21,34 +21,34 @@
   <section id="tab-all" class="tab-panel">
     <div class="flex items-center gap-3 mb-3">
       <div class="relative w-full md:w-80">
-        <input id="bookSearch" type="text" placeholder="Search by ID, title, or author..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        <input id="bookSearch" type="text" placeholder="Search by ID, title, or author..." class="w-full pl-9 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+        <i class="fas fa-search absolute left-2.5 top-2.5 text-gray-400"></i>
       </div>
     </div>
     <div class="bg-white rounded shadow overflow-x-auto">
-      <table class="min-w-full">
+      <table class="min-w-full text-sm">
         <thead>
           <tr class="bg-gray-100 text-left">
-            <th class="px-4 py-2">Book ID</th>
-            <th class="px-4 py-2">Title</th>
-            <th class="px-4 py-2">Author</th>
-            <th class="px-4 py-2 text-right">Price</th>
-            <th class="px-4 py-2 text-center">Status</th>
+            <th class="px-3 sm:px-4 py-2">Book ID</th>
+            <th class="px-3 sm:px-4 py-2">Title</th>
+            <th class="px-3 sm:px-4 py-2">Author</th>
+            <th class="px-3 sm:px-4 py-2 text-right">Price</th>
+            <th class="px-3 sm:px-4 py-2 text-center">Status</th>
           </tr>
         </thead>
         <tbody id="booksTbody">
           {% for b in books %}
           <tr class="border-t book-row" data-book-id="{{ b.book_id }}" data-title="{{ b.title }}" data-author="{{ b.author }}" data-status="{{ b.status }}">
-            <td class="px-4 py-2 font-mono">{{ b.book_id }}</td>
-            <td class="px-4 py-2">{{ b.title }}</td>
-            <td class="px-4 py-2">{{ b.author }}</td>
-            <td class="px-4 py-2 text-right">{{ '%.2f' % b.price if b.price is not none }}</td>
-            <td class="px-4 py-2 text-center">
+            <td class="px-3 sm:px-4 py-2 font-mono">{{ b.book_id }}</td>
+            <td class="px-3 sm:px-4 py-2">{{ b.title }}</td>
+            <td class="px-3 sm:px-4 py-2">{{ b.author }}</td>
+            <td class="px-3 sm:px-4 py-2 text-right">{{ '%.2f' % b.price if b.price is not none }}</td>
+            <td class="px-3 sm:px-4 py-2 text-center">
               <span class="px-2 py-1 rounded text-xs {{ 'bg-green-100 text-green-700' if b.status=='available' else 'bg-yellow-100 text-yellow-700' }}">{{ b.status|capitalize }}</span>
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">No books found</td></tr>
+          <tr><td colspan="5" class="px-3 sm:px-4 py-6 text-center text-gray-500">No books found</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -62,26 +62,26 @@
       <table class="min-w-full">
         <thead>
           <tr class="bg-gray-100 text-left">
-            <th class="px-4 py-2">Book ID</th>
-            <th class="px-4 py-2">Title</th>
-            <th class="px-4 py-2">Issued On</th>
-            <th class="px-4 py-2">Due Date</th>
-            <th class="px-4 py-2 text-center">Status</th>
+            <th class="px-3 sm:px-4 py-2">Book ID</th>
+            <th class="px-3 sm:px-4 py-2">Title</th>
+            <th class="px-3 sm:px-4 py-2">Issued On</th>
+            <th class="px-3 sm:px-4 py-2">Due Date</th>
+            <th class="px-3 sm:px-4 py-2 text-center">Status</th>
           </tr>
         </thead>
         <tbody>
           {% for t in current_transactions %}
           <tr class="border-t">
-            <td class="px-4 py-2 font-mono">{{ t.book_id }}</td>
-            <td class="px-4 py-2">{{ t.book_title }}</td>
-            <td class="px-4 py-2 text-sm">{{ t.issued_at|datetimeformat }}</td>
-            <td class="px-4 py-2 text-sm">{{ t.due_at|datetimeformat if t.due_at else '-' }}</td>
-            <td class="px-4 py-2 text-center">
+            <td class="px-3 sm:px-4 py-2 font-mono">{{ t.book_id }}</td>
+            <td class="px-3 sm:px-4 py-2">{{ t.book_title }}</td>
+            <td class="px-3 sm:px-4 py-2 text-sm">{{ t.issued_at|datetimeformat }}</td>
+            <td class="px-3 sm:px-4 py-2 text-sm">{{ t.due_at|datetimeformat if t.due_at else '-' }}</td>
+            <td class="px-3 sm:px-4 py-2 text-center">
               <span class="px-2 py-1 rounded text-xs {{ 'bg-red-100 text-red-700' if t.status=='overdue' else 'bg-yellow-100 text-yellow-700' }}">{{ t.status|capitalize }}</span>
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">No active borrows</td></tr>
+          <tr><td colspan="5" class="px-3 sm:px-4 py-6 text-center text-gray-500">No active borrows</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -94,19 +94,19 @@
       <table class="min-w-full">
         <thead>
           <tr class="bg-gray-100 text-left">
-            <th class="px-4 py-2">Book ID</th>
-            <th class="px-4 py-2">Title</th>
-            <th class="px-4 py-2">Issued On</th>
-            <th class="px-4 py-2">Returned On</th>
+            <th class="px-3 sm:px-4 py-2">Book ID</th>
+            <th class="px-3 sm:px-4 py-2">Title</th>
+            <th class="px-3 sm:px-4 py-2">Issued On</th>
+            <th class="px-3 sm:px-4 py-2">Returned On</th>
           </tr>
         </thead>
         <tbody>
           {% for t in past_transactions %}
           <tr class="border-t">
-            <td class="px-4 py-2 font-mono">{{ t.book_id }}</td>
-            <td class="px-4 py-2">{{ t.book_title }}</td>
-            <td class="px-4 py-2 text-sm">{{ t.issued_at|datetimeformat }}</td>
-            <td class="px-4 py-2 text-sm">{{ t.returned_at|datetimeformat if t.returned_at else '-' }}</td>
+            <td class="px-3 sm:px-4 py-2 font-mono">{{ t.book_id }}</td>
+            <td class="px-3 sm:px-4 py-2">{{ t.book_title }}</td>
+            <td class="px-3 sm:px-4 py-2 text-sm">{{ t.issued_at|datetimeformat }}</td>
+            <td class="px-3 sm:px-4 py-2 text-sm">{{ t.returned_at|datetimeformat if t.returned_at else '-' }}</td>
           </tr>
           {% else %}
           <tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">No past transactions</td></tr>

@@ -3,7 +3,7 @@
 {% block title %}Placements - Hostel MS{% endblock %}
 
 {% block content %}
-<div class="p-6">
+<div class="p-3 sm:p-4 md:p-6">
   <div class="flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">Placements</h1>
     <form method="get" action="{{ url_for('student_placements') }}" class="flex items-center space-x-2">
@@ -15,7 +15,7 @@
     </form>
   </div>
 
-  <div class="bg-white p-6 rounded-lg shadow">
+  <div class="bg-white p-4 sm:p-5 md:p-6 rounded-lg shadow">
     {% if placements %}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for p in placements %}
@@ -51,18 +51,69 @@
       </div>
       <!-- Pagination -->
       {% if total_pages and total_pages > 1 %}
-      <div class="mt-6 flex items-center justify-between">
-        <div class="text-sm text-gray-500">Showing page {{ page }} of {{ total_pages }} &middot; {{ total_count }} results</div>
-        <div class="flex items-center space-x-2">
-          {% set prev_page = page - 1 %}
-          {% set next_page = page + 1 %}
-          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page <= 1 }}" href="{{ url_for('student_placements', q=q, page=prev_page) }}">Prev</a>
-          <!-- Simple numbered pages -->
-          {% for i in range(1, total_pages + 1) %}
-            <a href="{{ url_for('student_placements', q=q, page=i) }}" class="px-3 py-2 border rounded text-sm {{ 'bg-gray-800 text-white border-gray-800' if i == page else 'bg-white' }}">{{ i }}</a>
-          {% endfor %}
-          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page >= total_pages }}" href="{{ url_for('student_placements', q=q, page=next_page) }}">Next</a>
+      <div class="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div class="text-sm text-gray-500">Showing page {{ page }} of {{ total_pages }} · {{ total_count }} results</div>
+
+        <div class="max-w-full overflow-x-auto">
+          <nav class="inline-flex rounded-md shadow bg-white">
+            {% set prev_page = page - 1 %}
+            {% set next_page = page + 1 %}
+
+            <a class="px-3 py-2 border border-gray-300 {{ 'text-gray-400 cursor-not-allowed pointer-events-none bg-gray-50' if page <= 1 else 'text-gray-700 hover:bg-gray-50' }}" href="{{ url_for('student_placements', q=q, page=prev_page) }}">
+              <i class="fas fa-chevron-left"></i>
+            </a>
+
+            {# windowed pages with ellipses: first, last, and page±2 #}
+            {% set window_start = 1 if page - 2 < 1 else page - 2 %}
+            {% set window_end = total_pages if page + 2 > total_pages else page + 2 %}
+            {% set shown = [] %}
+
+            {# always show first page #}
+            {% if 1 not in shown %}
+              {% set _ = shown.append(1) %}
+              <a href="{{ url_for('student_placements', q=q, page=1) }}" class="px-3 py-2 border border-gray-300 {{ 'bg-blue-600 text-white font-medium' if page == 1 else 'bg-white text-gray-700 hover:bg-gray-50' }}">1</a>
+            {% endif %}
+
+            {# leading ellipsis #}
+            {% if window_start > 2 %}
+              <span class="px-3 py-2 border border-gray-300 bg-white text-gray-700">…</span>
+            {% endif %}
+
+            {# middle window #}
+            {% for i in range(window_start, window_end + 1) %}
+              {% if i != 1 and i != total_pages %}
+                <a href="{{ url_for('student_placements', q=q, page=i) }}" class="px-3 py-2 border border-gray-300 {{ 'bg-blue-600 text-white font-medium' if i == page else 'bg-white text-gray-700 hover:bg-gray-50' }}">{{ i }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {# trailing ellipsis #}
+            {% if window_end < total_pages - 1 %}
+              <span class="px-3 py-2 border border-gray-300 bg-white text-gray-700">…</span>
+            {% endif %}
+
+            {# last page #}
+            {% if total_pages > 1 %}
+              <a href="{{ url_for('student_placements', q=q, page=total_pages) }}" class="px-3 py-2 border border-gray-300 {{ 'bg-blue-600 text-white font-medium' if page == total_pages else 'bg-white text-gray-700 hover:bg-gray-50' }}">{{ total_pages }}</a>
+            {% endif %}
+
+            <a class="px-3 py-2 border border-gray-300 {{ 'text-gray-400 cursor-not-allowed pointer-events-none bg-gray-50' if page >= total_pages else 'text-gray-700 hover:bg-gray-50' }}" href="{{ url_for('student_placements', q=q, page=next_page) }}">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </nav>
         </div>
+
+        {# Mobile jump select for large totals #}
+        {% if total_pages > 20 %}
+        <form method="get" action="{{ url_for('student_placements') }}" class="md:hidden">
+          <input type="hidden" name="q" value="{{ q }}">
+          <label class="sr-only" for="pageJump">Jump to page</label>
+          <select id="pageJump" name="page" class="border rounded px-2 py-2" onchange="this.form.submit()">
+            {% for i in range(1, total_pages + 1) %}
+              <option value="{{ i }}" {% if i == page %}selected{% endif %}>Page {{ i }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        {% endif %}
       </div>
       {% endif %}
     {% else %}
