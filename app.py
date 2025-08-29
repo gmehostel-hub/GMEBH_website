@@ -11,6 +11,7 @@ import secrets
 import string
 import certifi
 from threading import Lock
+from email_client import EmailClient
 
 # Load environment variables
 load_dotenv()
@@ -98,6 +99,7 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 mail = Mail(app)
+email_client = EmailClient(app, mail)
 
 # Login Manager
 login_manager = LoginManager()
@@ -128,22 +130,21 @@ def generate_random_password(length=8):
 
 def send_credentials_email(email, username, password):
     """Send login credentials to the user's email"""
-    msg = Message('Your Hostel Management System Credentials',
-                  sender=os.environ.get('MAIL_USERNAME'),
-                  recipients=[email])
-    msg.body = f'''
-    Welcome to Hostel Management System!
-    
-    Your login credentials:
-    Username: {username}
-    Password: {password}
-    
-    Please change your password after first login.
-    
-    Regards,
-    Hostel Management Team
-    '''
-    mail.send(msg)
+    subject = 'Your Hostel Management System Credentials'
+    body = f'''
+Welcome to Hostel Management System!
+
+Your login credentials:
+Username: {username}
+Password: {password}
+
+Please change your password after first login.
+
+Regards,
+Hostel Management Team
+'''
+    # Use bulk-capable client (Brevo if configured, else Flask-Mail fallback)
+    email_client.send_single(email, subject, body)
 
 def _generate_otp(length=6):
     """Generate a numeric OTP code of given length."""
@@ -152,20 +153,11 @@ def _generate_otp(length=6):
 
 def send_reset_otp_email(email, otp):
     """Send password reset OTP to the user's email.
-    Uses a unique subject/header so clients don't thread/override messages.
+    Includes a short unique token in subject to avoid threading collisions.
     """
-    # Short unique token to avoid email threading/overriding
-    uniq = secrets.token_hex(4)  # 8-hex chars
+    uniq = secrets.token_hex(4)
     subject = f"Your Hostel MS Password Reset Code [{uniq}]"
-    msg = Message(subject,
-                  sender=os.environ.get('MAIL_USERNAME'),
-                  recipients=[email])
-    # Add a unique header as an extra anti-threading hint
-    try:
-        msg.extra_headers = {**getattr(msg, 'extra_headers', {}), 'X-Entity-Ref-ID': uniq}
-    except Exception:
-        pass
-    msg.body = f"""
+    body = f"""
 You requested to reset your password for Hostel Management System.
 
 Your OTP code is: {otp}
@@ -173,7 +165,7 @@ This code expires in 10 minutes.
 
 If you did not request this, please ignore this email.
 """
-    mail.send(msg)
+    email_client.send_single(email, subject, body)
 
 # Authentication Routes
 @app.route('/login', methods=['GET', 'POST'])

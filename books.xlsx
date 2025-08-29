@@ -1,0 +1,430 @@
+bookid,title,author,price
+1,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-1,None,50
+2,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-2,None,50
+3,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-3,None,50
+4,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-4,None,50
+5,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-5,None,50
+6,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-6,None,50
+7,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-7,None,50
+8,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-8,None,50
+9,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-9,None,50
+10,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-10,None,50
+11,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-11,None,50
+12,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-12,None,50
+13,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-13,None,50
+14,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-14,None,50
+15,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-15,None,50
+16,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-16,None,50
+17,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-17,None,50
+18,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-18,None,50
+19,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-19,None,50
+20,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-20,None,50
+21,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-21,None,50
+22,Dr Baba Saheb Ambedkar Avara Samagra Barahagalu Mattu Bhashanagalu Part-22,None,50
+23,Computer Oraganization,L.Krishanananda,320
+24,C++ 4th Edition,HERBERT SCHILOT,665
+25,Computer network,Andrew s. tanehbaun and david,659
+26,Unix system using C++,Terrence chan,395
+27,System software,Leland L. BECKANDD D.MANJULA,435
+28,TEST YOUR C SKILL,Yashavanth kanetkar,270
+29,COMPUTER NETwork,Andrew s. tanehbaun and david,659
+30,COMPUTER Oraganization,L krishanandan,320
+31,FINATE AUTOMATA AND FORMAL LANGAUAGE,A.m padmareddy,340
+32,FINATE AUTOMATA AND FORMAL LANGAUAGE,A.m padmareddy,340
+33,Computer networks,andrew s. tanehbaun and david,659
+34,Computer networks,andrew s. tanehbaun and david,659
+35,C++ 4th Edition,herbert schilot,665
+36,Finite automate and formal language,A.m.padmareddy,340
+37,Finite automate and formal language,A.m.padmareddy,340
+38, computer organization,"Carl hamacher,Safwat zaky",750
+39,FInite automate and formal language,A.M padmareddy,340
+40,Computer netwoks,andrew s. tanehbaun and david,659
+41,C-programing techniques,padma reddy,330
+42,computer network,andrew s. tanehbaun and david,659
+43,Unix system using C++,Terrence chan,395
+44,System software,Leland And D Manjula,435
+45,Data Compression 4th Edition,David Salmon,1295
+46,Discrete and combinational mathamatics,Ralph P and B V Ramana,849
+47,Program in anci,E Balaguruswamy,300
+48,Program in Java,E Balaguruswamy,440
+49,Operarting system concept,"Abraham,Peter and Gerg Gagne",599
+50,Graph theory and combinatrics,Ralph P and B V Ramana,0
+51,Graph theory and combinatrics,Ralph P and B V Ramana,0
+52,Graph theory and combinatrics,Ralph P and B V Ramana,0
+53,Operarting system concept,"Abraham,Peter",599
+54,Software engineering ,Roger  S Pressman,775
+55,System software,A M Padmareddy,340
+56,Graph theory and combinatrics,Dr D S C,325
+57,Let us C,Yashavanth kanetkar,279
+58,"Automata theory, Language and computation","John, Rajeev Motwani,Jeffrey",
+59,An Integrated approach to software engineering ,Pankaj Jalote,465
+60,Graph theory and combinatrics,Dr D S C,325
+61,Graph theory and combinatrics,Dr D S C,325
+62,Software engineering ,Roger  S Pressman,715
+63,Graph theory and combinatrics,Dr D S C,325
+64,Interactive computer graphics,Edward engel,
+65,Operarting system concept,Abraham and Peter,599
+66,Software engineering ,Pankaj Jalote,
+67,Design and analysis of algorithm 2nd edition,Anani Levitin,
+68,Design and analysis of algorithm 2nd edition,Anani Levitin,
+69,Software engineering ,Pankaj Jalote,
+70,Design and analysis of algorithm ,Anani Levitin,450
+71,Computer organization ,"Carl hamacher,Safwat zaky",750
+72,Concept and application of Unix,Sumitrabha Das,
+73,Graph theory and combinatrics,Dr D S C,325
+74,An Integrated approach to software engineering ,Pankaj Jalote,465
+75,Discrete and combinational mathamatics,Ralph P and B V Ramana,825
+76,Discrete and combinational mathamatics ,Ralph P and B V Ramana,825
+77,Let us C 13th edition,Yashavanth kanetkar,270
+78,Let us C 13th edition,Yashavanth kanetkar,270
+79,Graph theory and combinatrics,Dr D S C,325
+80,Interactive computer graphics,Edward engel,
+81,Operarting system concept,Abraham and Peter,599
+82,Operarting system concept,Abraham and Peter,599
+83,Operarting system concept,Abraham and Peter,599
+84,Fundamentals of database systems,"Ramez,Shamkant",
+85,Fundamentals of database systems,"Ramez,Shamkant",
+86,Fundamentals of database systems,"Ramez,Shamkant",
+87,Fundamentals of database systems,"Ramez,Shamkant",
+88,Fundamentals of database systems,"Ramez,Shamkant",
+89,Fundamentals of database systems,"Ramez,Shamkant",
+90,Fundamentals of database systems,"Ramez,Shamkant",
+91,Introduction to data compression ,"Khalid,Sayood",575
+92,System software,Leland And D Manjula,
+93,"Automata theory, Language and computation","John, Rajeev Motwani,Jeffrey",
+94,Let us C 13th edition,Yashavanth kanetkar,270
+95,Your Unix ,Sumitrabha Das,945
+96,Let us C 13th edition,Yashavanth kanetkar,270
+97,Software engineering ,Roger  S Pressman,775
+98,C programming technics,padma reddy,330
+99,Test your C skills,Yashavanth,270
+100,System software,Leland And D Manjula,699
+101,The 8051 micro controller and embedded system,"Mohammed Ali,Janice Rolin",699
+102,Finite automate and formal language,padma reddy,340
+103,data compression,David Salmon,1295
+104,data structures ,padma reddy,330
+105,Computer organization ,"Carl hamacher,Safwat zaky",760
+106,Operarting system ,"Dhananjay M,Dhamdhere",466
+107,Introduction to data compression ,"Khalid,Sayood",575
+108,java 7th edition ,herbert schilot,
+109,computer and data processing ,"hervey,barbara deitel",24
+110,basic thermodynamics ,"p b nagaraj,venkatesh",150
+111,strength of materials ,"j b k das,h s vishwanath",180
+112,basic thermodynamics ,"p b nagaraj,venkatesh",150
+113,autmobile engineering vol-1,dr kirpal singh ,325
+114,autmobile engineering vol-1,dr kirpal singh ,325
+115,autmobile engineering vol-1,dr kirpal singh ,325
+116,autmobile engineering vol-1,dr kirpal singh ,325
+117,autmobile engineering vol-1,dr kirpal singh ,325
+118,kinamatics of machines,j b k das and srinivas murthy,295
+119,kinamatics of machines,j b k das and srinivas murthy,295
+120,strength of materials ,b s basavarajaiah and mahadevappa ,525
+121,strength of materials ,h s vishwanath,160
+122,turbo machine ,dr n krishnamurthy,375
+123,elements of mechanical engineering ,k r gopalakrishna,114
+124,engineering metrology,r k jain,485
+125,industrial robotics,"michel,mitchel, roger,nicholas",
+126,theory of machines,"r s khurmi , j k gupta",895
+127,basic and applied thermodynamics ,p k nag ,600
+128,material science ,dr k r phanich,250
+129,turbo machine ,dr n krishnamurthy,375
+130,manufacturing process -3,kestoor praveen ,210
+131,basic thermodynamics ,"p b nagaraj,venkatesh",150
+132,M P -2,dr k radhakrishnan,180
+133,material science ,dr k r phanich,250
+134,fluid mechanics ,dr r k bansal ,395
+135,m p -3,dr k radhakrishnan,195
+136,m p -3,dr k radhakrishnan,195
+137,m p -1,dr k radhakrishnan,295
+138,m p -1,dr k radhakrishnan,250
+139,operating system ,"Dhananjay M,Dhamdhere",665
+140,mechanical vibration,j b k das,450
+141,controlling engineering,"u a bakshi,v u bakshi",499
+142,material science and engineering ,balasubhramanyan,245
+143,m p -2,dr k radhakrishnan,180
+144,elements of civil engineering ,s s bhavikatti,199
+145,m p -3,dr k radhakrishnan,250
+146,sada utsaha ullasa hege ?,c r chandrashekhar,85
+147,swantantra gangeya savira toregalu,n p shankar narayan rao,250
+148,dalitara vodala kicchu ,prof p simpiger,300
+149,siri gannada artha kosha,dr k shivram karanth,170
+150,samagra prapanchada ithihasa ,prof r m shebarayya,650
+151,mileniun samanya adhyayana,h r k ,395
+152,business communiction,urmila rai and s m rai,295
+153,mechanics of machine,j b k das and srinivas murthy,275
+154,soft skills for everyone ,jeff butterfield ,425
+155,pattern classifiacation ,"richard peter, david ",789
+156,dalitara vodala kicchu ,prof p simpiger,300
+157,m p -1 ,dr k radhakrishnan,250
+158,pattern classifiacation ,"richard peter, david ",789
+159,year book 2015,s k sachdeva,350
+160,the constitution of india ,dr durgadas  basu ,295
+161,swantantra gangeya savira toregalu,n p shankar narayan rao,250
+162,standard dictionary,d k bharadwaj,225
+163,how to face interviews  ,s k tarafder,175
+164,oxford advanced dictionary,a s hornby,645
+165,english english kannada dictionary,prof l l sheshagiri rao,675
+166,manava bhugola shashtrada mula tatwagalu,dr ranganath,325
+167,samaja shastra,shankar rao,130
+168,prakrutika bhugola shastrada mula tatwagalu,dr ranganath,400
+169,karantakada samsiktha ithihas ,dr suryanath kamath,170
+170,diamond me n mine arthashastra,b m jagadish ,68
+171,top exam enjoy studies ,dhaval bhatiya ,135
+172,gate tutor civil engineering ,prashanth dixit ,795
+173,accountancy for 2nd puc ,b s raman ,290
+174,g mat review ,david vilson,1450
+175,ssb interview ,,240
+176,digital switching system,k chandrashekhar ,195
+177,logic and computer design fundamental, morris and charle,599
+178,theory and problems in mathematics ,s s bosco ,158
+179,electronic principle ,alber paul malvino,
+180,electronid device and circuits ,"jacob ,satyabrata",799
+181,switch gear and protection ,sunil s rao,180
+182,electronics and telecommunication egineering ,g k publications,550
+183,electronics and telecommunication egineering ,g k publications,550
+184,bank p o /empty,arihant publication,675
+185,gate 2014 eee,g k publications,210
+186,a p j abdul kalam ignited minds,,199
+187,wings of fire ,a p j abdul kalam,200
+188,gate 2017 cs and it,g k publications,925
+189,gate 2017 cs and it,g k publications,925
+190,general studies and engineering aptitude ,n v s raju,550
+191,e s e mechanical engineering ,g k publications,595
+192,gate 2017 eee,g k publications,925
+193,general studies and engineering aptitude ,n v s raju,550
+194,drdo mech and metallargy engineering ,parmeeth singh ,450
+195,verbal and non verbal reasoning ,b s agarval,850
+196,basic television and video system,bernad,300
+197,solid state physics,s o pillai,399
+198,digital system processing ,d ganesh rao,350
+199,field theory ,s p basavaraj,423
+200,electrical and electronic measurement , a k sawhney,625
+201,network analysis,van valkenborg,350
+202,ese eee,g k publications,595
+203,electronic devices and circuit theory,robert and luise,799
+204,network analysis,van valkenborg,350
+205,electronic devices and circuit theory,robert and luise,799
+206,engineering electromagnetics ,"u a bakshi,v u bakshi",335
+207,fields and waves ,m murgesh and shantiprasad,135
+208,"electrinc power generation,tranmission ",s n singh,350
+209,signals and systems ,uday kumar s,370
+210,high voltage engineering ,m s naidu,
+211,switch gear and protection ,"u a bakshi,v u bakshi",350
+212,modern power system analysis ,"d p kothari , nagarath ",250
+213,modern power system analysis ,"d p kothari , nagarath ",250
+214,high voltage engineering ,m s naidu,
+215,operational amplifiers and linear ics ,david a bell,495
+216,electrical engineering ies -15,a c engineering publication,500
+217,electronic devices and circuit theory,robert and luise,799
+218,8051 micro controller and embedded system,"Mohammed Ali,Janice Rolin",699
+219,data communication and networking ,behrooz a foroozan,675
+220,eletrical technology ,"theraja , a k the raja",645
+221,network analysis,van valkenborg,350
+222,lab manual and digital signal processing ,,
+223,embedded system design ,frankvahid ,
+224,electrical power generation and distribution ,s n singh,350
+225,electrical power generation and distribution ,s n singh,350
+226,power electronics and variable frequency,bimal k bose,
+227,embedded system design ,frankvahd,
+228,power electronics and variable drives ,bimal k bose,
+229,operational amplifiers and linear ics ,david a  bell,495
+230,embedded system design ,frank vahd and tony,
+231,embedded system design ,frank vahd and tony,
+232,embedded system design ,frank vahd and tony,
+233,network analysis,channa venakatesha ,600
+234,network analysis,van valkenborg,350
+235,field theory ,s p basavaraj,423
+236,digital signal processing ,dr j s chittode,475
+237,switch gear and protection ,"u a bakshi,v u bakshi",350
+238,electrical power generation  t and d,s n singh,350
+239,power electronics and motor drives ,bimal k bose,
+240,field theory ,s p basavaraj,423
+241,energy engineering ,a c niranjan ,280
+242,controll system ,channa venakatesha ,250
+243,operational amplifiers and linear ics ,david a bell,495
+244,analog  electronic circuits,u b mahadevaswamy ,399
+245,signal and systems,uday kumar s,370
+246,digital logic and computer design,m morris mano,659
+247,electronical technology,b l the raja,645
+248,high voltage engineering ,m s naidu,550
+249,network analysis,van valkenborg,350
+250,power electronics and motor drives ,bimal k bose,
+251,electrical technology,b l the raja a k raja,645
+252,electrical power generation t and d,s n singh,350
+253,electrical technology,b l a k the raja,695
+254,operational amplifiers and linear ics ,david a bell,495
+255,operational amplifiers and linear ics ,david a bell,495
+256,Power system protection and switch gear,badri ram,499
+257,electronic principle ,albert malvino,650
+258,power electronic and motor drive ,bimal k bose,
+259,signal and systems,uday kumar s,395
+260,electrical power distribution ,a s pabla,
+261,engineering electromagnetics ,s p basavaraj,480
+262,modern power system analysis ,"d p kothari , nagarath ",599
+263,modern power system analysis ,"d p kothari , nagarath ",599
+264,electric power distubution,a s pabla,
+265,electric technology,b l and a k the raja ,695
+266,ENG m-1,dr k.s.c,425
+267,ENG m-1,dr k.s.c,425
+268,ENG mathematics-1,dr k.s.c,425
+269,ENG mathematics-1,dr k.s.c,425
+270,ENG mathematics-1,dr k.s.c,425
+271,ENG mathematics-3,dr d s c ,340
+272,ENG mathematics-3,dr d s c ,340
+273,ENG mathematics-3,dr d s c ,340
+274,ENG mathematics-3,dr d s c ,340
+275,ENG mathematics-4,dr d s c ,200
+276,ENG mathematics-2,dr k s c,210
+277,ENG chemistry,r v gadag,245
+278,ENG physics,s p basavaraj,375
+279,ENG mathematics,dr d s c ,400
+280,mathematics -1,dr d s c ,360
+281,ENG physics,s p basavaraj,375
+282,ENG matematics -1,dr d s c ,360
+283,eng mathematics-4,dr d s c ,240
+284,eng mathematics-1,dr d s c ,285
+285,DR.B R ambedker belkige barad patragalu,prof. rangswamy belkawadi,400
+286,strength of materials ,b s basavarajaiah and mahadevappa ,550
+287,fluid mechanics amnd hydraulic machins,r k bansal,650
+288,auto cad,sham tickoo,
+289,elementv of civil engineering and mechanics,s s bhavikatti,199
+290,elementv of civil engineering and mechanics,s s bhavikatti,199
+291,design of steel structure,m subramnanyan,799
+292,geotechonical engineering,t n  ramamurthy,260
+293,engineering materials, rangwala,105
+294,engineering materials, rangwala,395
+295,surviving and leveling,s s bhavikatti,295
+296,surviving and leveling,s s bhavikatti,295
+297,design of steel struture, n subramanyam,725
+298,design of steel struture, n subramanyam,725
+299,strel structures, n subramanyam,550
+300,airport planning and design,s k khanna ,150
+301,rcc and folded plates,p v vageesh,425
+302,ethics integrapy and aptitude for civil,g subbrao,495
+303,building materials, s k duggal,350
+304,surving and leveling,s s bhavikatti,205
+305,airport planning and design,s k khanna ,150
+306,design of r c foundations,p c vargees,425
+307,design of rcc sturcture elements,s s bhavikatti,225
+308,design of steel struture,s s bhavikatti,345
+309,ENG. Hydrology,k subramnya,
+310,surviving and leveling,s s bhavikatti,264
+311,building materials,s k duggal,350
+312,engineering geology,parbin singh ,350
+313,hydrology,h p raghunath,825
+314,design steel structure,n subramanian,725
+315,elementv of civil engineering and mechanics,s s bhavikatti,50
+316,highway engineering,s k khanna ,250
+317,highway engineering,s k khanna ,250
+318,highway engineering,s k khanna ,250
+319,highway engineering,s k khanna ,250
+320,rcc and folded plates,p v vageesh,425
+321,rcc and folded plates,p v vageesh,425
+322,elementv of civil engineering and mechanics,s s bhavikatti,50
+323,hydrology, h m ragunath,325
+324,hydrology, h m ragunath,325
+325,Software engineering ,roger s pressman,795
+326,computer networks,"andrew,david",659
+327,samgra barahagalu mattu bhashangalu,dr b r ambedkar,50
+328,geotechanical engineering,t n  ramamurthy,260
+329,turbo machine ,m s govind gowda,350
+330,fluid mechanincs and hydralic machines,r k bansal,650
+331,civil engineering ese-2018,g k publications,995
+332,geotechnical engineering,t n  ramamurthy,260
+333,eng materials,r k rajputh,395
+334,energy engineering ,r k hegade,250
+335,airport planning and design,s k khanna ,150
+336,energy sources,g d rai ,280
+337,railway engineeri9ng,s p arora,150
+338,design data handbook,k mahadevan,285
+339,design data handbook,k mahadevan,285
+340,quantitative aptitide,r s argarwal,595
+341,hdl programming fundamentals,botros,
+342,programming languages,vinaykumar hc,110
+343,ESE-2018 mecfhanical engineering,g k publications,1050
+344,Software engineering ,roger s pressman,775
+345,verbal and non verbal reasoning ,dr r s agrawal,925
+346,power system analysis and stability,v neelkantan,325
+347,modern powwer system anlysis ,"d p kothari , nagarath ",
+348,high voltage engineering , m s naidu,
+349,surviving theory and practice,s s bhavikatti,385
+350,engineering materials ,r k rajputh,395
+351,8051 micro controller and embedded system,mahamad ali,699
+352,caed,by v.t.u,120
+353,elements of mechanical engineering ,k r gopalakrishna,200
+354,design mechine element -01,j b k das and srinivas murthy,325
+355,fluid machines and hydralic machine,dr r k barnal,650
+356,dynamics of machines, j b k das ,400
+357,fluid machanics ,dr r k bansal ,375
+358,element of civill engineering and mechanical eng,t p jagadish,150
+359, drdo ece,,505
+360,engineerign chemistry ,r v gadag,245
+361,visual basic 6.0,d s rajendra prasad,150
+362,surying levelling vol-1,s s bhavikatti,150
+363,unix ,sumitabha das,350
+364,unix ,sumitabha das,350
+365,operational amplifiers and linear ics ,david a bell,525
+366,turbo machine ,dr n krishnamurthy,375
+367,materail science and metallurgy,k r phaneesh,240
+368,field theory ,bakshi,475
+369,sql server 6.5 admin,lance mortesen,450
+370,descrete maths,dr d s c ,360
+371,dms ,dr d s c ,360
+372,ese 2018,deepak gupta,995
+373,engineering physics,s p basavaraj,330
+374,engineering mathematics -1,,360
+375,controll system engineering ,I j nagarath,300
+376,mathematics -1,,425
+377,developing communication skills ,krishna mohan,250
+378,power electricals ,j s chittod ,399
+379,field theory ,u g bakshi,475
+380,signals and systems ,udaykumar s,370
+381,Computer organization ,carl hamachaer,500
+382,electronic devices and circuit theory,robert l boylestad ,900
+383,design of machine elements ,j b k das and srinivas murthy,440
+384,strength of materials ,b s basavarajappa ,900
+385,descrete mathematical structure,dr d s c ,290
+386,power system engineering ,m l soni,999
+387,modern controll engineering,katsuhiko ogata,354
+388,signals and systems ,dr d s c ,280
+389,network analysis,bakshi,450
+390,analog  electronic circuits,godse,500
+391,design analysis of algorithm ,anany levitin ,400
+392,data communication,behrouz aforozuan,550
+393,daa,padana reddy,350
+394,engnineering mathematics -1,dr k s c,350
+395,engineering mathematics -2,dr k s c,340
+396,pcd,a m padmareddy,320
+397,network theory,channavenkatesh,398
+398,catography network security,behrouz aforozuan,350
+399,learing c++,eric nager,340
+400,strength of materials in si units,b s basavaraj,695
+401,machines of materials si units,beer,890
+402,strength of material si units,bhansal,769
+403,strength of materials ,s ramamurthy,795
+404,hydrolysis and fluid machines including hydrolysis machines in si units,p n modi,780
+405,fundamental machines and hydrolic machine problems and solutions,k subramnya,799
+406,introduction to fluid machines and fluid mechanics ,s k som,720
+407,surying levelling vol-1,t r kantikar,250
+408,surying levelling ,n n basak,625
+409,geology,p k mukerjee,350
+410,engineering and general geology for be civil  mining ,prabin singh,450
+411,building and constructions and material testing and qaulity controll lab manual,neha,780
+412,building construction,b c punmia,550
+413,building materials,s k duggal,399
+414,building materials,s c rangwal,375
+415,basic structural analysis ,c s reddy,730
+416,analysis inderminate structures for 5th sem be civil engg vtu,h s vishwanth,350
+417,basic structural analysis ,k u muthu,625
+418,geographical information science,narayanapunni grahi ,395
+419,principles of management,p  c tripti,625
+420,construction project management,k k chittara,950
+421,construction management and internship for 6th sem be and btech civil engg,h s vishwanth,290
+422,design of rcc sturcture elements vol-1,s s bhavikatti,250
+423,highway engineering,s k khanna ,275
+424,principles and practice of highway engineering ,kadiyall,499
+425,water supply engineering environmental engineering vol-1,santosh kumar,599
+426,water and waste water technology,mark j hammer,659
+427,ground improvement technics,,
+428,engineering hydrolysis ,k subramnya,610
+429,ground waste,h n raghunath,699
