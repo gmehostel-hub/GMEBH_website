@@ -4,6 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Hostel Management System{% endblock %}</title>
+    
+    {% block meta %}
+    {# Core SEO #}
+    {% set default_title = 'Hostel Management System' %}
+    {% set default_description = 'Gmebh is an exclusive online portal for hostel students in Mysore Bogadi. Access resources, updates, and student community features in one place.' %}
+    {% set default_site_url = 'https://www.gmebh.info/' %}
+    {% set is_private = current_user.is_authenticated if current_user is defined else false %}
+    
+    <meta name="description" content="{% block meta_description %}{{ default_description }}{% endblock %}">
+    <meta name="robots" content="{% block robots %}{{ 'noindex, nofollow' if is_private else 'index, follow' }}{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}{{ request.base_url if request is defined else default_site_url }}{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/png">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+
+    {# Open Graph / Facebook #}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Gmebh">
+    <meta property="og:title" content="{% block og_title %}{{ self.title()|striptags if self.title is defined else default_title }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta property="og:url" content="{{ request.base_url if request is defined else '' }}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/og.png', _external=true) if request is defined else url_for('static', filename='images/og.png') }}{% endblock %}">
+
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ self.og_image() }}{% endblock %}">
+    <meta name="theme-color" content="#0ea5e9">
+
+    {# JSON-LD Structured Data: Organization + Website #}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Gmebh",
+      "url": "{{ request.url_root|trim if request is defined else default_site_url }}",
+      "logo": "{{ url_for('static', filename='images/logo.png', _external=true) if request is defined else url_for('static', filename='images/logo.png') }}"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Gmebh",
+      "url": "{{ request.url_root|trim if request is defined else default_site_url }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ (request.url_root|trim if request is defined else default_site_url) ~ 'search?q={query}' }}",
+        "query-input": "required name=query"
+      }
+    }
+    </script>
+    {% endblock %}
     <!-- Modern web fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

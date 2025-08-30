@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify, make_response
 from flask_pymongo import PyMongo
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -297,6 +297,62 @@ def index():
         else:
             return redirect(url_for('student_dashboard'))
     return render_template('index.html')
+
+# -----------------------------
+# SEO: robots.txt and sitemap.xml
+# -----------------------------
+
+@app.route('/robots.txt')
+def robots_txt():
+    base = request.url_root.rstrip('/') if request else ''
+    lines = [
+        'User-agent: *',
+        # Block private areas and APIs
+        'Disallow: /admin/',
+        'Disallow: /warden/',
+        'Disallow: /student/',
+        'Disallow: /api/',
+        # Allow these explicitly (optional)
+        'Allow: /',
+        f'Sitemap: {base}/sitemap.xml'
+    ]
+    resp = make_response('\n'.join(lines) + '\n')
+    resp.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return resp
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    # Public routes to include in sitemap
+    pages = [
+        ('index', {}),
+        ('login', {}),
+        ('forgot_password', {}),
+    ]
+    urlset = []
+    for endpoint, params in pages:
+        try:
+            loc = url_for(endpoint, _external=True, **params)
+        except Exception:
+            # Skip if route missing
+            continue
+        urlset.append(f"""
+    <url>
+      <loc>{loc}</loc>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+    </url>""")
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{''.join(urlset)}
+</urlset>
+"""
+    resp = make_response(xml)
+    resp.headers['Content-Type'] = 'application/xml; charset=utf-8'
+    return resp
+
+@app.route('/favicon.ico')
+def favicon():
+    return redirect(url_for('static', filename='images/favicon.png'))
 
 @app.route('/admin/dashboard')
 @login_required

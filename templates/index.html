@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome - Hostel Management System{% endblock %}
+{% block title %}Gmebh | Student Portal for Hostel Students in Mysore Bogadi{% endblock %}
+
+{# Homepage SEO overrides #}
+{% block meta_description %}Gmebh is an exclusive online portal for hostel students in Mysore Bogadi. Access resources, updates, and student community features in one place.{% endblock %}
+{% block canonical %}https://www.gmebh.info/{% endblock %}
+{% block og_title %}Gmebh | Student Portal for Hostel Students in Mysore Bogadi{% endblock %}
+{% block og_image %}{{ url_for('static', filename='images/og.png', _external=True) }}{% endblock %}
+{% block twitter_title %}Gmebh | Student Portal for Hostel Students in Mysore Bogadi{% endblock %}
+{% block twitter_description %}Gmebh is an exclusive online portal for hostel students in Mysore Bogadi. Access resources, updates, and student community features in one place.{% endblock %}
+{% block twitter_image %}{{ url_for('static', filename='images/og.png', _external=True) }}{% endblock %}
 
 {% block body_classes %}min-h-screen flex flex-col{% endblock %}
 {% block mobile_header_classes %}block{% endblock %}
