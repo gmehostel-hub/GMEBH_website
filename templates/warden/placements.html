@@ -4,13 +4,19 @@
 
 {% block content %}
 <div class="p-6">
-  <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Placements</h1>
-    <form method="get" action="{{ url_for('warden_placements') }}" class="flex items-center space-x-2">
-      <input type="text" name="q" value="{{ q or '' }}" placeholder="Search by name, company, role, location, year" class="border rounded px-3 py-2 text-sm w-64" />
-      <button type="submit" class="px-3 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"><i class="fas fa-search mr-1"></i>Search</button>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Placements</h1>
+      <p class="text-sm text-gray-500">Search placements by name, company, role, location, or year.</p>
+    </div>
+    <form method="get" action="{{ url_for('warden_placements') }}" class="w-full sm:w-auto flex items-center gap-2 flex-wrap">
+      <div class="relative">
+        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        <input type="text" name="q" value="{{ q or '' }}" placeholder="Search placements..." class="border rounded pl-9 pr-3 py-2 text-sm w-full sm:w-72 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+      </div>
+      <button type="submit" class="px-3 py-2 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"><i class="fas fa-magnifying-glass mr-1"></i>Search</button>
       {% if q %}
-      <a href="{{ url_for('warden_placements') }}" class="text-sm text-gray-500 hover:underline">Clear</a>
+      <a href="{{ url_for('warden_placements') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
       {% endif %}
     </form>
   </div>
@@ -19,31 +25,23 @@
     {% if placements %}
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for p in placements %}
-        <div class="border rounded-lg p-4 hover:shadow transition-shadow">
-          <div class="flex items-start justify-between">
-            <div class="flex items-center">
-              <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-3">
-                <i class="fas fa-briefcase"></i>
-              </div>
-              <div>
-                <div class="text-sm text-gray-500">{{ p.company }}</div>
-                <div class="text-lg font-semibold">{{ p.role }}</div>
-              </div>
-            </div>
-            <span class="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600">{{ p.year }}</span>
+        <div class="relative rounded-xl border bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+          <!-- Year badge -->
+          <div class="absolute right-3 top-3">
+            <span class="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-700"><i class="fas fa-calendar mr-1"></i>{{ p.year }}</span>
           </div>
-          <div class="mt-4 space-y-1 text-sm">
-            <div class="flex items-center text-gray-600">
-              <i class="fas fa-user mr-2 text-gray-400"></i>
-              <span class="font-medium">{{ p.student_name }}</span>
-            </div>
-            <div class="flex items-center text-gray-600">
-              <i class="fas fa-location-dot mr-2 text-gray-400"></i>
-              <span>{{ p.location }}</span>
-            </div>
-            <div class="flex items-center text-green-700">
-              <i class="fas fa-indian-rupee-sign mr-2 text-green-600"></i>
-              <span class="font-semibold">{{ p.package_lpa }} LPA</span>
+
+          <div class="flex items-start gap-3">
+            {% set comp = (p.company or '') %}
+            {% set initials = (comp.split()[0][0] ~ (comp.split()[1][0] if comp.split()|length>1 else '')).upper() if comp else 'C' %}
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white font-semibold shadow-sm">{{ initials }}</div>
+            <div class="min-w-0 w-full">
+              <div class="text-base font-semibold text-gray-900">{{ p.student_name }}</div>
+              <div class="mt-2 space-y-1 text-sm">
+                <div class="text-gray-700"><span class="text-gray-500">Company:</span> {{ p.company }}</div>
+                <div class="text-gray-700"><span class="text-gray-500">Role:</span> {{ p.role }}</div>
+                <div class="text-gray-700"><span class="text-gray-500">Package (LPA):</span> {{ p.package_lpa }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -56,11 +54,11 @@
         <div class="flex items-center space-x-2">
           {% set prev_page = page - 1 %}
           {% set next_page = page + 1 %}
-          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page <= 1 }}" href="{{ url_for('warden_placements', q=q, page=prev_page) }}">Prev</a>
+          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page <= 1 }}" href="{{ url_for('warden_placements', q=q, page=prev_page) }}" aria-label="Previous">Prev</a>
           {% for i in range(1, total_pages + 1) %}
-            <a href="{{ url_for('warden_placements', q=q, page=i) }}" class="px-3 py-2 border rounded text-sm {{ 'bg-gray-800 text-white border-gray-800' if i == page else 'bg-white' }}">{{ i }}</a>
+            <a href="{{ url_for('warden_placements', q=q, page=i) }}" class="px-3 py-2 border rounded text-sm {{ 'bg-blue-600 text-white border-blue-600' if i == page else 'bg-white hover:bg-gray-50' }}">{{ i }}</a>
           {% endfor %}
-          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page >= total_pages }}" href="{{ url_for('warden_placements', q=q, page=next_page) }}">Next</a>
+          <a class="px-3 py-2 border rounded text-sm {{ 'opacity-50 pointer-events-none' if page >= total_pages }}" href="{{ url_for('warden_placements', q=q, page=next_page) }}" aria-label="Next">Next</a>
         </div>
       </div>
       {% endif %}
