@@ -407,7 +407,15 @@ def warden_dashboard():
     stats = {
         'students_count': mongo.db.users.count_documents({'role': 'student'}),
         'total_rooms': mongo.db.rooms.count_documents({}),
-        'occupied_rooms': mongo.db.rooms.count_documents({'status': 'occupied'}),
+        # Consider a room occupied when current_occupancy >= capacity (independent of stored status)
+        'occupied_rooms': mongo.db.rooms.count_documents({
+            '$expr': {
+                '$gte': [
+                    { '$ifNull': [ '$current_occupancy', 0 ] },
+                    { '$ifNull': [ '$capacity', 0 ] }
+                ]
+            }
+        }),
         'books_count': mongo.db.books.count_documents({}),
         'new_feedback': mongo.db.feedback.count_documents({'status': {'$ne': 'resolved'}})
     }

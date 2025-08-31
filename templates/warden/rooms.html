@@ -39,14 +39,15 @@
     <!-- Rooms Grid -->
     <div id="roomsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {% for room in rooms %}
+        {% set effective_status = ( 'maintenance' if room.status == 'maintenance' else ( 'occupied' if (room.current_occupancy|int) >= (room.capacity|int) else 'available' ) ) %}
         <div class="bg-white rounded-lg shadow-md overflow-hidden border-l-4 
-                    {% if room.status == 'available' %}border-green-500
-                    {% elif room.status == 'occupied' %}border-blue-500
+                    {% if effective_status == 'available' %}border-green-500
+                    {% elif effective_status == 'occupied' %}border-blue-500
                     {% else %}border-yellow-500{% endif %}"
              data-room-number="{{ room.room_number }}"
              data-room-type="{{ room.room_type }}"
              data-floor="{{ room.floor }}"
-             data-status="{{ room.status }}"
+             data-status="{{ effective_status }}"
              data-capacity="{{ room.capacity }}"
              data-occupancy="{{ room.current_occupancy }}">
             <div class="p-4">
@@ -56,10 +57,10 @@
                         <p class="text-gray-600 text-sm">{{ room.room_type.replace('_',' ')|title }}</p>
                     </div>
                     <span class="px-2 py-1 text-xs rounded-full 
-                              {% if room.status == 'available' %}bg-green-100 text-green-800
-                              {% elif room.status == 'occupied' %}bg-blue-100 text-blue-800
+                              {% if effective_status == 'available' %}bg-green-100 text-green-800
+                              {% elif effective_status == 'occupied' %}bg-blue-100 text-blue-800
                               {% else %}bg-yellow-100 text-yellow-800{% endif %}">
-                        {{ room.status|title }}
+                        {{ effective_status|title }}
                     </span>
                 </div>
                 <div class="mt-4">
@@ -207,6 +208,9 @@
             const prettyType = room.room_type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             const overlay = document.getElementById('viewRoomModal');
             const container = overlay.querySelector('.modal-container');
+            const occ = Number(room.current_occupancy || 0);
+            const cap = Number(room.capacity || 0);
+            const effectiveStatus = (room.status === 'maintenance') ? 'maintenance' : (occ >= cap ? 'occupied' : 'available');
             container.innerHTML = `
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Room ${room.room_number} Details</h3>
@@ -219,7 +223,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <p class="text-sm text-gray-500">Status</p>
-                            <p class="font-medium">${room.status.charAt(0).toUpperCase() + room.status.slice(1)}</p>
+                            <p class="font-medium">${effectiveStatus.charAt(0).toUpperCase() + effectiveStatus.slice(1)}</p>
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Type</p>
