@@ -199,7 +199,7 @@ def login():
     return render_template('auth/login.html')
 
 # -----------------------------
-# Forgot / Reset Password (OTP)
+# Forgot / Reset Password (OTP) 
 # -----------------------------
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
@@ -858,7 +858,6 @@ def add_room():
 def update_room(room_id):
     if current_user.role != 'admin':
         return jsonify({'error': 'Unauthorized'}), 403
-        
     try:
         data = request.get_json()
         updates = {}
@@ -1509,6 +1508,7 @@ def add_placement():
         role = (request.form.get('role') or '').strip()
         location = (request.form.get('location') or '').strip()
         year = (request.form.get('year') or '').strip()
+        linkedin_url = (request.form.get('linkedin_url') or '').strip()
 
         if not all([student_name, package_lpa, company, role, location, year]):
             flash('All fields are required', 'error')
@@ -1534,6 +1534,9 @@ def add_placement():
             'year': year_val,
             'created_at': datetime.utcnow()
         }
+        # Optional fields
+        if linkedin_url:
+            doc['linkedin_url'] = linkedin_url
         mongo.db.placements.insert_one(doc)
         flash('Placement added successfully', 'success')
     except Exception as e:
@@ -1609,7 +1612,7 @@ def admin_feedback():
         return redirect(url_for('index'))
     # Show open first, then resolved, newest first within groups
     open_items = list(mongo.db.feedback.find({'status': {'$ne': 'resolved'}}).sort('created_at', -1))
-    resolved_items = list(mongo.db.feedback.find({'status': 'resolved'}).sort('resolved_at', -1))
+    resolved_items = list(mongo.db.feedback.find({'st atus': 'resolved'}).sort('resolved_at', -1))
     return render_template('admin/feedback.html', open_items=open_items, resolved_items=resolved_items)
 
 @app.route('/admin/feedback/add', methods=['POST'])

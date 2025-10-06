@@ -25,6 +25,7 @@
           <th class="px-4 py-2">Role</th>
           <th class="px-4 py-2">Location</th>
           <th class="px-4 py-2 text-center">Year</th>
+          <th class="px-4 py-2">LinkedIn</th>
         </tr>
       </thead>
       <tbody id="placementsTbody">
@@ -36,9 +37,16 @@
           <td class="px-4 py-2">{{ p.role }}</td>
           <td class="px-4 py-2">{{ p.location }}</td>
           <td class="px-4 py-2 text-center">{{ p.year }}</td>
+          <td class="px-4 py-2">
+            {% if p.linkedin_url %}
+              <a href="{{ p.linkedin_url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">View Profile</a>
+            {% else %}
+              <span class="text-gray-400">—</span>
+            {% endif %}
+          </td>
         </tr>
         {% else %}
-        <tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">No placements added yet</td></tr>
+        <tr><td colspan="7" class="px-4 py-6 text-center text-gray-500">No placements added yet</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -77,6 +85,10 @@
       <div>
         <label class="block text-sm font-medium mb-1">Year of Placement</label>
         <input name="year" type="number" min="2000" max="2100" required class="w-full p-2 border rounded" placeholder="e.g., 2025">
+      </div>
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium mb-1">LinkedIn Profile URL (optional)</label>
+        <input name="linkedin_url" type="url" class="w-full p-2 border rounded" placeholder="https://www.linkedin.com/in/username/">
       </div>
       <div class="md:col-span-2 flex justify-end gap-2 pt-2">
         <button type="button" class="px-4 py-2 border rounded" onclick="toggleModal('addPlacementModal', true)">Cancel</button>

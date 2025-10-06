@@ -41,6 +41,12 @@
                 <div class="text-gray-700"><span class="text-gray-500">Company:</span> {{ p.company }}</div>
                 <div class="text-gray-700"><span class="text-gray-500">Role:</span> {{ p.role }}</div>
                 <div class="text-gray-700"><span class="text-gray-500">Package (LPA):</span> {{ p.package_lpa }}</div>
+                {% if p.linkedin_url %}
+                <div class="text-gray-700">
+                  <span class="text-gray-500">LinkedIn:</span>
+                  <a href="{{ p.linkedin_url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">View Profile</a>
+                </div>
+                {% endif %}
               </div>
             </div>
           </div>
